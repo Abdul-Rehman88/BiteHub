@@ -1,16 +1,21 @@
 // import { useState } from 'react'
-import { Button } from "@/components/base/buttons/button";
-
+import Layout from './components/layout/Layout'
 
 function App() {
   
   return (
-    <div className="App">
-      <h1 className="text-3xl font-bold underline">
-        Welcome to BiteHub!
-      </h1>
-      <Button>Click Me</Button>
-    </div>
+    <Layout>
+      <div className="App bg-[#FFF8F1] dark:bg-[#222222] min-h-screen flex justify-center items-center">
+        <h1>hello</h1>
+        #FFF8F1 background
+        #F5F5F5 background
+        #222222 text
+        #1A1A1A heading
+        #424242 subheading
+        #1A1A1A  , #FFB703 buttons
+        
+        </div>
+    </Layout>
   )
 
 }
