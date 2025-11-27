@@ -5,7 +5,7 @@ import Footer from '../footer/Footer'
 function Layout({children}) {
   return (
 
-    <div className="layout">
+    <div className="layout overflow-hidden">
         <Header />
       {children}
         <Footer />

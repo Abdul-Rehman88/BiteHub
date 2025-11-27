@@ -5,7 +5,7 @@ function App() {
   
   return (
     <Layout>
-      <div className="App bg-[#FFF8F1] dark:bg-[#222222] min-h-screen flex justify-center items-center">
+      <div className="App bg-[#FFF8F1]  min-h-screen flex justify-center items-center">
         <h1>hello</h1>
         #FFF8F1 background
         #F5F5F5 background
