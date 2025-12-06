@@ -15,3 +15,33 @@
   }
 }
 
+/* Text Font */
+body {
+  font-family: 'Figtree', sans-serif;
+}
+
+/* Heading Font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Antic Didone', serif;
+}
+
+:root {
+  /* Background colors */
+  --bg-light: #FFF8F1;
+  --bg-default: #F5F5F5;
+  --white : #FFFFFF;
+
+  /* Text colors */
+  --text-default: #424242;
+  --text-muted: #757575;
+
+  /* Headings */
+  /* --heading-color: #1A1A1A; */
+  --heading-color: #222222;
+
+  /* Buttons */
+  --button-text: #1A1A1A;
+  --button-bg: #FFB703;
+  --button-hover-bg: #E09A05;
+}
+

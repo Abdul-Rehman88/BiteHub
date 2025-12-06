@@ -1,8 +1,9 @@
 import React from "react";
 import heroSectionHome from "../../assets/images/hero-section-home.webp";
 import Button from "../../components/button/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 function Home() {
+  const navigation = useNavigate();
   return (
     <>
       <div
@@ -16,8 +17,9 @@ function Home() {
           <p className="lg:text-xl md:text-xl text-lg text-center w-[350px] md:w-[400px] text-[#F5F5F5]">
             Taste the excellence. Feel the ambiance. Enjoy the moment.
           </p>
-            <Button  className="text-base capitalize text-[#f5f5f5] z-20 hover:text-[#E09A05] border border-[#f5f5f5] hover:border-[#E09A05] px-8 py-2 rounded-[6px] transition-all duration-300 flex " onClick={<Link to="/reservation" />}>
-                <Link to="/reservation">Reservation</Link>
+            <Button  className="text-base capitalize text-[#f5f5f5] z-20 hover:text-[#E09A05] border border-[#f5f5f5] hover:border-[#E09A05] px-8 py-2 rounded transition-all duration-300 flex " 
+            onClick={() => navigation("/reservation")}>
+                Reservation
             </Button>
         </div>
       </div>
