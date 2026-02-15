@@ -222,7 +222,7 @@ const goToSlide = (index) => {
       </div>
 
       {/* menu section */}
-      <div className="flex flex-col gap-20 justify-center items-center py-[30px] md:py-[50px] lg:py-20 px-5 lg:px-[50px] md:px-[30px] bg-(--bg-color)">
+      <div className="flex flex-col gap-5 md:gap-8 lg:gap-10  justify-center items-center py-[30px] md:py-[50px] lg:py-20 px-5 lg:px-[50px] md:px-[30px] bg-(--bg-color)">
         {/* tabs */}
         <ul className="flex items-center bg-(--bg-color) rounded-full p-1 relative">
           <div
@@ -262,11 +262,11 @@ const goToSlide = (index) => {
         </ul>
 
         {/* TAB CONTENT HERE */}
-        <div className="w-full text-center mt-6">
+        <div className="w-full text-center">
           {loading ? (
             <p className="text-(--text-color)">Loading menu items...</p>
           ) : (
-            <>
+            <div>
               {activeTab === 1 && (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
                   {filteredItems.length > 0 ? (
@@ -329,9 +329,11 @@ const goToSlide = (index) => {
                   )}
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
+          <Button className="text-(--white-color) hover:bg-transparent hover:text-(--button-hover-text-color)"
+          onClick={() => navigation('/menu')}>View all Menu</Button>
       </div>
       {/* end of menu section */}
       
