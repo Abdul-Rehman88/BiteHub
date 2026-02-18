@@ -176,7 +176,7 @@ const goToSlide = (index) => {
             Taste the excellence. Feel the ambiance. Enjoy the moment.
           </p>
           <Button
-            className="text-[15px] capitalize text-(--light-color) hover:text-[#E09A05] bg-transparent hover:bg-transparent border border-(--light-color) hover:border-[#E09A05] px-8 py-2 rounded transition-all duration-300"
+            className="text-[15px] capitalize text-(--light-color) hover:text-(--button-hover-text-color) bg-transparent hover:bg-transparent border border-(--light-color) hover:border-(--button-hover-bg-color) px-8 py-2 rounded transition-all duration-300"
             onClick={() => navigation("/reservation")}
           >
             Reservation
