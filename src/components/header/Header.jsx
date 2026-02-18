@@ -44,7 +44,6 @@ const ResponsiveNavbar = () => {
 
             {/* Buttons + Mobile Icon */}
             <div className="flex items-center gap-2.5">
-
                 <button className="py-[7px] text-base px-4 rounded-full capitalize bg-[#FFB703] text-[#1A1A1A] hover:bg-[#E09A05] transition-all duration-300 hidden sm:flex">
                     Sign up
                 </button>

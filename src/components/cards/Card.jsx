@@ -7,6 +7,7 @@ function Card({
   description,
   buttonText,
   price,
+  onClick,
 
   //  dynamic styling props
   imgClass = "",
@@ -52,6 +53,7 @@ function Card({
         {/* button */}
         <Button
           className={`opacity-0 group-hover:opacity-100 px-3 py-2 mt-3 transition-all duration-1000 rounded-md text-[0.9rem] ${buttonClass}`}
+          onClick={onClick}
         >
           {buttonText || 'Button'}
         </Button>
