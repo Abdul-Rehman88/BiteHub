@@ -3,7 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig.js";
 import { Card } from "../component_index";
 import { useDispatch } from "react-redux";
-import { addItem } from "../../store/AddToCart.js";
+import { addItem } from "../../store/Cart.js";
 import toast from "react-hot-toast";
 
 

@@ -1,4 +1,3 @@
-import React from "react";
 import heroSectionReservation from "../../assets/images/Reservation-hero.webp";
 import reservationFormImge from "../../assets/images/reservation-form-image.webp";
 
