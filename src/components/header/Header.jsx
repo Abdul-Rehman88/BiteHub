@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { CiMenuFries } from "react-icons/ci";
 import logo from "../../assets/images/logo2.jpg";
 import { Link, NavLink } from "react-router-dom";
+
 
 const ResponsiveNavbar = () => {
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -44,10 +45,12 @@ const ResponsiveNavbar = () => {
 
             {/* Buttons + Mobile Icon */}
             <div className="flex items-center gap-2.5">
-                <button className="py-[7px] text-base px-4 rounded-full capitalize bg-[#FFB703] text-[#1A1A1A] hover:bg-[#E09A05] transition-all duration-300 hidden sm:flex">
-                    Sign up
-                </button>
-
+                <NavLink
+                    to="/LogIn"
+                    className="py-[7px] text-base px-4 rounded-full capitalize bg-[#FFB703] text-[#1A1A1A] hover:bg-[#E09A05] transition-all duration-300 hidden sm:flex"
+                >
+                    Sign In
+                </NavLink>
                 <CiMenuFries
                     className="text-[1.8rem] text-[#E09A05]  md:hidden"
                     onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
@@ -79,10 +82,10 @@ const ResponsiveNavbar = () => {
                     ))}
                     
                 </ul>
-                <button className="relative group text-left text-[15px] capitalize text-[#1A1A1A]  transition md:hidden">
-                    Sign up
+                <NavLink to="/LogIn" className="relative group text-left text-[15px] capitalize text-[#1A1A1A]  transition md:hidden">
+                    Sign In
                     <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#E09A05] transition-all duration-300 group-hover:w-full"></span>
-                </button>
+                </NavLink>
 
             </aside>
         </nav>
