@@ -2,9 +2,7 @@ import {useState,useEffect} from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig.js";
 import { Card } from "../component_index";
-import { useDispatch } from "react-redux";
-import { addItem } from "../../store/Cart.js";
-import toast from "react-hot-toast";
+import useAddToCart  from "../../hook/useAddToCart.js";
 
 
 export default function Tab() {
@@ -12,12 +10,9 @@ export default function Tab() {
     const [activeTab, setActiveTab] = useState(1);
     const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
-    const dispatch = useDispatch();
-
-    const handleAddToCart =(item)=>{
-        dispatch(addItem(item))
-        toast.success(`${item.name} added to cart successfully!`);
-    }
+    // const dispatch = useDispatch();
+    
+    const handleAddToCart = useAddToCart();
     // Fetch menu items from Firestore
     useEffect(() => {
     const fetchMenuItems = async () => {

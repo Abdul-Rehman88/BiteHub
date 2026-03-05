@@ -1,9 +1,15 @@
-import React from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import { RegisterUser } from "../../firebase/auth"  
+import toast from "react-hot-toast";
+import Button from "../../components/button/Button";
 function SignUp() {
-  const [passwordVisible, setPasswordVisible] = React.useState(false);
-  const [phone, setPhone] = React.useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] =useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] =useState("");
 
   const togglePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -17,23 +23,33 @@ function SignUp() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();          // prevent page reload
+    try {
+    // Call your Firebase function
+    await RegisterUser(name, phone, email, password);
 
-    if (phone.length !== 11) {
-      alert("Phone number must be exactly 11 digits.");
-      return;
-    }
-
-    console.log("Signup submitted!");
-  };
-
+    // Reset form fields
+    setName("");
+    setEmail("");
+    setPhone("");
+    setPassword("");
+    toast.success("Account created successfully! Redirecting to login...");
+    window.location.href = "/login"; // Redirect to login page after successful registration
+    
+    } catch (err) {
+      if (err.code === "auth/email-already-in-use") {
+      setEmailError("This email is already registered. Please sign in instead.");
+      } else {
+      console.error(err.message);  }
+    };
+  }
+  
   return (
     <>
       <div className="flex justify-center items-center px-5 lg:px-[50px] md:px-[30px] py-[30px] md:py-[50px] lg:py-20 bg-(--bg-color)">
         
-        <div className="mx-auto w-full sm:w-[400px] 
-        bg-(--white-color) p-10 rounded-2xl 
+        <div className="mx-auto w-full sm:w-[400px] bg-(--white-color) p-10 rounded-2xl 
         shadow-xl border border-gray-300">
 
           {/* Heading */}
@@ -54,14 +70,14 @@ function SignUp() {
                 Full Name
               </label>
               <input
+                name="name"
                 type="text"
                 required
+                value={name}
+                onChange={e =>{setName(e.target.value)}}
                 placeholder="Enter your full name"
-                className="h-11 w-full rounded-lg border  border-gray-400
-                px-4 text-sm text-(--text-color)
-                placeholder:text-gray-400
-                focus:outline-none focus:border-(--button-hover-bg-color)
-                transition"
+                className="h-11 w-full rounded-lg border  border-gray-400 px-4 text-sm text-(--text-color)
+                placeholder:text-gray-400 focus:outline-none focus:border-(--button-hover-bg-color) transition"
               />
             </div>
 
@@ -74,12 +90,14 @@ function SignUp() {
                 type="email"
                 required
                 placeholder="name@example.com"
-                className="h-11 w-full rounded-lg border  border-gray-400
-                px-4 text-sm text-(--text-color)
-                placeholder:text-gray-400
-                focus:outline-none focus:border-(--button-hover-bg-color)
-                transition"
+                value={email}
+                onChange={e => {setEmail(e.target.value); setEmailError(""); }} // clear error when user starts retyping
+                className="h-11 w-full rounded-lg border border-gray-400 px-4 text-sm text-(--text-color)
+                placeholder:text-gray-400 focus:outline-none focus:border-(--button-hover-bg-color) transition"
               />
+              {emailError && (
+                <p className="text-xs text-red-500 mt-2">{emailError}</p>
+              )}
             </div>
 
             {/* Phone */}
@@ -95,8 +113,7 @@ function SignUp() {
                 value={phone}
                 onChange={handlePhoneChange}
                 placeholder="03XXXXXXXXX"
-                className="h-11 w-full rounded-lg border border-gray-400
-                px-4 text-sm text-(--text-color) placeholder:text-gray-400 
+                className="h-11 w-full rounded-lg border border-gray-400 px-4 text-sm text-(--text-color) placeholder:text-gray-400 
                 focus:outline-none focus:border-(--button-hover-bg-color) transition"
               />
               <p className="text-xs text-gray-400 mt-2">
@@ -117,6 +134,8 @@ function SignUp() {
                   required
                   minLength={8}
                   placeholder="Enter your password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
                   className="h-11 w-full rounded-lg border border-gray-400
                   px-4 pr-12 text-sm text-(--text-color) placeholder:text-gray-400
                   focus:outline-none focus:border-(--button-hover-bg-color) transition duration-200"
@@ -154,17 +173,12 @@ function SignUp() {
             </div>
 
             {/* Button */}
-            <button
+            <Button
               type="submit"
-              className="w-full h-11 rounded-lg text-sm font-semibold
-              bg-(--button-bg-color) text-(--white-color)
-              border border-(--button-bg-color)
-              hover:bg-transparent hover:text-(--button-text-color)
-              hover:border-(--button-hover-bg-color)
-              transition duration-300"
-            >
+              className="w-full h-11 text-sm hover:bg-transparent text-(--white-color) 
+                hover:text-(--button-text-color)"              >
               Create Account
-            </button>
+            </Button>
           </form>
 
           {/* Divider */}
@@ -184,7 +198,8 @@ function SignUp() {
             type="button"
             className="flex items-center justify-center gap-3 h-11 w-full
             rounded-lg border text-(--text-color) hover:border-(--button-hover-bg-color)
-            hover:text-(--button-hover-bg-color) transition duration-300"
+            hover:text-(--button-hover-bg-color) transition-all duration-150
+            active:scale-95 active:translate-y-0.5 "
           >
             {/* google logo */}
           <svg width="18" height="18" viewBox="0 0 48 48">

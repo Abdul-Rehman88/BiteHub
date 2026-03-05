@@ -3,7 +3,7 @@ function Button(
         children,
         className = '',
         onClick,
-        type,
+        type = 'button',
         ...props
     }
 ) {

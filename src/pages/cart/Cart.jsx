@@ -2,10 +2,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { removeItem, updateitem } from "../../store/Cart.js";
 import toast from "react-hot-toast";
 import Button from "../../components/button/Button.jsx";
+import { Link } from "react-router-dom";
 
 function Cart() {
   const cartItems = useSelector((state) => state.cart.item) || [];
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
 
   // safe totals
   const subTotal = cartItems.length
@@ -30,6 +32,20 @@ function Cart() {
 
     dispatch(updateitem({ ...item, quantity: newQuantity }));
   };
+
+  if (!user) {
+        return (
+            <div className="text-center py-20">
+                <p className="text-lg text-gray-500">Please login to view your cart</p>
+                <Link to="/LogIn" className="mt-4 inline-block bg-[#FFB703] px-6 py-2 rounded-full transition-all duration-150
+                  active:scale-95 active:translate-y-0.5 hover:bg-transparent text-(--white-color) hover:text-(--button-text-color) 
+                  border border-[#FFB703] hover:border-[#E09A05]">
+                    Sign In
+                </Link>
+            </div>
+        );
+    }
+
 
   return (
     <>

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { clearUser } from "./authSlice";
 
 const initialState = {
     item:[]
@@ -30,7 +31,13 @@ const cart = createSlice({
                 }
                 return i
             })
-        }
+        },
+
+        extraReducers: (builder) => {
+        builder.addCase(clearUser, (state) => {
+            state.items = []; // ✅ auto clear cart when user logs out
+        });
+    }
     }
 })
 

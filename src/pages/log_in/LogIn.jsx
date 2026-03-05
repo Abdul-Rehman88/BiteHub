@@ -1,8 +1,16 @@
 import React from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { loginUser } from "../../firebase/auth"
+import { useDispatch } from "react-redux";
+import { setUser } from "../../store/authSlice";
+import Button from "../../components/button/Button";
 
 function LogIn() {
-  const [passwordVisible, setPasswordVisible] = React.useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const togglePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -10,7 +18,30 @@ function LogIn() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted!");
+    setLoading(true); //
+    setError(null);
+
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    loginUser(email, password)
+      .then((user) => {
+        dispatch(setUser({
+          uid: user.uid,
+          email: user.email,
+        })); // Store user in Redux
+        window.location.href = "/"; // Redirect to home page after successful login
+      })
+      .catch((error) => {
+        if (error.code === "auth/invalid-credential") {
+          setError("Invalid email or password."); // ✅ wrong password or email
+        } else  {
+          console.error("Login error:", error);
+          // setError("An error occurred during login. Please try again."); // ✅ generic error message
+        }
+      })
+      .finally(() => {
+          setLoading(false); // ✅ stop loading when done
+      });  
   };
 
   return (
@@ -44,7 +75,7 @@ function LogIn() {
                     type="email"
                     required
                     placeholder="name@example.com"
-                    className="h-10 w-full rounded-md border 
+                    className="h-11 w-full rounded-md border 
                      px-3 py-2 text-sm text-(--text-color)
                     placeholder:text-gray-400
                     focus:outline-none focus:border-(--button-hover-bg-color)
@@ -53,52 +84,91 @@ function LogIn() {
                 </div>
 
                 {/* Password */}
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <label
-                      className="text-sm font-medium text-(--text-color)"
-                      htmlFor="password"
-                    >
-                      Password
-                    </label>
-                  </div>
-
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-(--text-color)">
+                    Password
+                  </label>
+                  
                   <div className="relative">
                     <input
                       id="password"
                       type={passwordVisible ? "text" : "password"}
                       required
                       placeholder="Enter your password"
-                      className="h-10 w-full rounded-md border 
-                       px-3 py-2 text-sm text-(--text-color)
-                      placeholder:text-gray-400 
+                      className="h-11 w-full rounded-lg border border-gray-400
+                      px-4 pr-12 text-sm text-(--text-color) placeholder:text-gray-400
                       focus:outline-none focus:border-(--button-hover-bg-color)
-                      focus:ring-0 transition"
+                      transition duration-200"
                     />
-
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                      <i
-                        className={`fas ${
-                          passwordVisible ? "fa-eye" : "fa-eye-slash"
-                        }  cursor-pointer`}
-                        onClick={togglePassword}
-                      ></i>
-                    </div>
+                
+                    {/* Eye Button */}
+                    <button
+                      type="button"
+                      onClick={togglePassword}
+                      className="absolute right-3 top-1/2 -translate-y-1/2
+                      text-gray-500 hover:text-(--button-hover-bg-color)
+                      transition"
+                    >
+                      {passwordVisible ? (
+                        // Eye Slash SVG
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-5 0-9-7-9-7a17.78 17.78 0 013.6-4.5m3.2-2A9.956 9.956 0 0112 5c5 0 9 7 9 7a17.78 17.78 0 01-2.2 3.3M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 6L3 3"
+                          />
+                        </svg>
+                      ) : (
+                        // Eye SVG
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm7.938 0a17.77 17.77 0 01-1.73 2.61C19.6 17.33 16.11 19 12 19s-7.6-1.67-9.21-4.39A17.77 17.77 0 011.062 12a17.77 17.77 0 011.73-2.61C4.4 6.67 7.89 5 12 5s7.6 1.67 9.21 4.39A17.77 17.77 0 0122.938 12z"
+                          />
+                        </svg>
+                      )}
+                    </button>
                   </div>
+                  
+                  {error && (
+                    <p className="text-xs mt-1 text-red-500">{error}</p> // ✅ show error
+                  )}
                 </div>
 
+          
                 {/* Sign In Button */}
-                <button
-                  type="submit"
-                  className="w-full h-10 rounded-md text-sm font-medium
-                  bg-(--button-bg-color) text-(--white-color)
-                  border border-(--button-bg-color)
-                  hover:bg-transparent hover:text-(--button-text-color)
-                  hover:border-(--button-hover-bg-color)
-                  transition duration-300"
+                <Button
+                 type="submit"
+                 className="w-full h-11 text-sm hover:bg-transparent text-(--white-color) 
+                 hover:text-(--button-text-color)"
                 >
-                  Sign In
-                </button>
+                   {loading ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                      </svg>
+                    </span>
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+              
               </div>
             </form>
 
@@ -118,11 +188,9 @@ function LogIn() {
             <button
               type="button"
               className="flex items-center justify-center gap-2 h-10 w-full
-              rounded-md border 
-               text-(--text-color)
-              hover:border-(--button-hover-bg-color)
-              hover:text-(--button-hover-bg-color)
-              transition duration-300"
+              rounded-md border text-(--text-color) hover:border-(--button-hover-bg-color)
+              hover:text-(--button-hover-bg-color) transition-all duration-150 active:scale-95 
+              active:translate-y-0.5 "
             >
               {/* google logo */}
               <svg className="h-5 w-5" viewBox="0 0 48 48">
