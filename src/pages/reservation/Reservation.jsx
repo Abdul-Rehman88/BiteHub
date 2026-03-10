@@ -1,7 +1,35 @@
 import heroSectionReservation from "../../assets/images/Reservation-hero.webp";
 import reservationFormImge from "../../assets/images/reservation-form-image.webp";
+import { createReservation } from "../../firebase/reservation";
+import toast from "react-hot-toast";
 
 function Reservation() {
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    const name = formData.get("full_name");
+    const email = formData.get("email");
+    const phone = formData.get("phone");
+    const date = formData.get("date");
+    const time = formData.get("time");
+    const guests = formData.get("guests");
+    const specialRequest = formData.get("special_request");
+
+    try {
+      await createReservation(name, email, phone, date, time, guests, specialRequest);
+      console.log("Reservation submitted successfully!");
+      toast.success("Your reservation has been submitted successfully!");
+
+      // Optionally, reset the form or show a success message
+    } catch (error) {
+      console.error("Error submitting reservation:", error);
+      toast.error("Failed to submit reservation. Please try again.");
+      // Optionally, show an error message
+    }
+  };
+
   return (
     <>
       {/* hero section */}
@@ -33,7 +61,7 @@ function Reservation() {
         </div>
 
         {/* Form Section */}
-        <form className="w-full bg-white p-6 lg:p-8  rounded-md shadow-lg space-y-6">
+        <form onSubmit={handleSubmit} className="w-full bg-white p-6 lg:p-8  rounded-md shadow-lg space-y-6">
           {/* Row 1: Full Name & Email */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative z-0 w-full group">
@@ -132,10 +160,8 @@ function Reservation() {
                 className="block py-2.5 px-0 w-full md:max-w-30 lg:max-w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               >
-                <option>1 Person</option>
                 <option>2 People</option>
                 <option>3 People</option>
-                <option>4 People</option>
                 <option>4 People</option>
                 <option>5 People</option>
                 <option>6 People</option>
@@ -168,7 +194,7 @@ function Reservation() {
           </div>
 
           {/* Submit Button */}
-          <button
+          <button          
             type="submit"
             className="w-full text-white bg-(--button-bg-color) hover:text-(--button-hover-text-color) border border-(--button-bg-color) hover:border-(--button-hover-bg-color) hover:bg-transparent font-medium rounded-lg text-sm px-4 py-3 focus:outline-none shadow-md"
           >
