@@ -1,3 +1,4 @@
+import { useState } from "react";
 import heroSectionReservation from "../../assets/images/Reservation-hero.webp";
 import reservationFormImge from "../../assets/images/reservation-form-image.webp";
 import { createReservation } from "../../firebase/reservation";
@@ -5,12 +6,13 @@ import toast from "react-hot-toast";
 import useRequireAuth from "../../hook/useRequireAuth";
 
 function Reservation() {
+  const [loading, setLoading] = useState(false);
   const checkAuth = useRequireAuth();
-  console.log(" outside Auth result:", checkAuth());
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); 
     if(!checkAuth())return;
-    console.log("Auth result:", checkAuth());
     const formData = new FormData(e.target);
     const name = formData.get("full_name");
     const email = formData.get("email");
@@ -22,8 +24,9 @@ function Reservation() {
     
     try {
       await createReservation(name, email, phone, date, time, guests, specialRequest);
-      console.log("Reservation submitted successfully!");
+      // console.log("Reservation submitted successfully!");
       toast.success("Your reservation has been submitted successfully!");
+      setLoading(false); //  stop loading when done
 
       // Optionally, reset the form or show a success message
     } catch (error) {
@@ -201,7 +204,16 @@ function Reservation() {
             type="submit"
             className="w-full text-white bg-(--button-bg-color) hover:text-(--button-hover-text-color) border border-(--button-bg-color) hover:border-(--button-hover-bg-color) hover:bg-transparent font-medium rounded-lg text-sm px-4 py-3 focus:outline-none shadow-md"
           >
-            Confirm Reservation
+            {loading ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                      </svg>
+                    </span>
+                  ) : (
+                    "Confirm Reservation"
+                  )}
           </button>
         </form>
       </section>
