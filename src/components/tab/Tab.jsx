@@ -2,17 +2,26 @@ import {useState,useEffect} from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig.js";
 import { Card } from "../component_index";
-import useAddToCart  from "../../hook/useAddToCart.js";
-
+import { useDispatch } from "react-redux";
+import { addItem } from "../../store/Cart.js";
+import toast from "react-hot-toast";
+import useRequireAuth from "../../hook/useRequireAuth.js"
 
 export default function Tab() {
 
     const [activeTab, setActiveTab] = useState(1);
     const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
+    const checkAuth = useRequireAuth()
+
+    const handleAddToCart =(item)=>{
+        if(!checkAuth())return;
+        dispatch(addItem(item))
+        toast.success(`${item.name} added to cart successfully!`);
+    }
     
-    const handleAddToCart = useAddToCart();
+    // const handleAddToCart = useAddToCart();
     // Fetch menu items from Firestore
     useEffect(() => {
     const fetchMenuItems = async () => {

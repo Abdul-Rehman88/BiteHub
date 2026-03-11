@@ -19,6 +19,7 @@ function Cart() {
 
   const handleRemoveFromCart = (item) => {
     dispatch(removeItem(item));
+    toast.success (`${item.name} Remove successfully`)
   };
 
   const handleUpdateQuantity = (item, newQuantity) => {

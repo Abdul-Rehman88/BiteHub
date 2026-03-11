@@ -2,13 +2,16 @@ import heroSectionReservation from "../../assets/images/Reservation-hero.webp";
 import reservationFormImge from "../../assets/images/reservation-form-image.webp";
 import { createReservation } from "../../firebase/reservation";
 import toast from "react-hot-toast";
+import useRequireAuth from "../../hook/useRequireAuth";
 
 function Reservation() {
-
+  const checkAuth = useRequireAuth();
+  console.log(" outside Auth result:", checkAuth());
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(!checkAuth())return;
+    console.log("Auth result:", checkAuth());
     const formData = new FormData(e.target);
-
     const name = formData.get("full_name");
     const email = formData.get("email");
     const phone = formData.get("phone");
@@ -16,7 +19,7 @@ function Reservation() {
     const time = formData.get("time");
     const guests = formData.get("guests");
     const specialRequest = formData.get("special_request");
-
+    
     try {
       await createReservation(name, email, phone, date, time, guests, specialRequest);
       console.log("Reservation submitted successfully!");
