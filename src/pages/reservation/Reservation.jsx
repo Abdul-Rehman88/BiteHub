@@ -4,35 +4,66 @@ import reservationFormImge from "../../assets/images/reservation-form-image.webp
 import { createReservation } from "../../firebase/reservation";
 import toast from "react-hot-toast";
 import useRequireAuth from "../../hook/useRequireAuth";
+import { PhoneInput } from "../../components/component_index.js";
+import { useSelector } from "react-redux";
 
 function Reservation() {
+  const user = useSelector((state)=>state.user.user)
   const [loading, setLoading] = useState(false);
   const checkAuth = useRequireAuth();
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true); 
-    if(!checkAuth())return;
-    const formData = new FormData(e.target);
-    const name = formData.get("full_name");
-    const email = formData.get("email");
-    const phone = formData.get("phone");
-    const date = formData.get("date");
-    const time = formData.get("time");
-    const guests = formData.get("guests");
-    const specialRequest = formData.get("special_request");
-    
-    try {
-      await createReservation(name, email, phone, date, time, guests, specialRequest);
-      // console.log("Reservation submitted successfully!");
-      toast.success("Your reservation has been submitted successfully!");
-      setLoading(false); //  stop loading when done
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [guests, setGuests] = useState("2 People");
+  const [specialRequest, setSpecialRequest] = useState("");
+  const [showError, setShowError]= useState(false)
 
-      // Optionally, reset the form or show a success message
+  const handleReservation = async (e) => {
+    e.preventDefault();
+    
+    if (phone.length !==11){
+      setShowError(true)
+      return
+    }else{
+      setShowError(false)
+    }
+    setLoading(true);
+
+    if (!checkAuth()) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await createReservation(
+        name,
+        email,
+        phone,
+        date,
+        time,
+        guests,
+        specialRequest,
+        user,
+      );
+      toast.success("Your reservation has been submitted successfully!");
+      //  Reset form after submission
+      setName("");
+      setEmail("");
+      setPhone("");
+      setDate("");
+      setTime("");
+      setGuests("2 People");
+      setSpecialRequest("");
+
     } catch (error) {
       console.error("Error submitting reservation:", error);
       toast.error("Failed to submit reservation. Please try again.");
-      // Optionally, show an error message
+      setLoading(false);
+      
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,7 +75,7 @@ function Reservation() {
         style={{ backgroundImage: `url(${heroSectionReservation})` }}
       >
         <div className="flex flex-col justify-center items-center w-full h-full z-10 gap-4">
-          <h1 className="lg:text-6xl md:text-5xl text-4xl font-bold text-center text-white  ">
+          <h1 className="lg:text-6xl md:text-5xl text-4xl font-bold text-center text-white">
             Book Your Table
           </h1>
           <p className="lg:text-xl md:text-xl text-lg text-center w-[300px] text-white">
@@ -53,21 +84,22 @@ function Reservation() {
         </div>
       </div>
 
-      {/* Resveration form section */}
-      <section 
-        className="flex md:flex-row flex-col-reverse gap-5 md:gap-8 lg:gap-10  justify-center items-center py-[30px] md:py-[50px] lg:py-20 px-5 lg:px-[50px] md:px-[30px] bg-(--bg-color)"
-      >
+      {/* Reservation form section */}
+      <section className="flex md:flex-row flex-col-reverse gap-5 md:gap-8 lg:gap-10 justify-center items-center py-[30px] md:py-[50px] lg:py-20 px-5 lg:px-[50px] md:px-[30px] bg-(--bg-color)">
         {/* Image Section */}
-        <div className="width-full">
+        <div className="w-full">
           <img
             src={reservationFormImge}
             alt="Reservation"
-            className="rounded-md "
+            className="rounded-md"
           />
         </div>
 
         {/* Form Section */}
-        <form onSubmit={handleSubmit} className="w-full bg-white p-6 lg:p-8  rounded-md shadow-lg space-y-6">
+        <form
+          onSubmit={handleReservation}
+          className="w-full bg-white p-6 lg:p-8 rounded-md shadow-lg space-y-6"
+        >
           {/* Row 1: Full Name & Email */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative z-0 w-full group">
@@ -76,7 +108,9 @@ function Reservation() {
                 name="full_name"
                 id="full_name"
                 placeholder=" "
-                className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:border-(--button-hover-bg-color) peer"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               />
               <label
@@ -86,13 +120,16 @@ function Reservation() {
                 Full Name
               </label>
             </div>
+
             <div className="relative z-0 w-full group">
               <input
                 type="email"
                 name="email"
                 id="email"
                 placeholder=" "
-                className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:border-(--button-hover-bg-color) peer"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               />
               <label
@@ -107,13 +144,12 @@ function Reservation() {
           {/* Row 2: Phone & Date */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative z-0 w-full group">
-              <input
-                type="tel"
-                name="phone"
-                id="phone"
+              <PhoneInput
+                value={phone}
+                setValue={setPhone}
+                showError={showError}
                 placeholder=" "
                 className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:border-(--button-hover-bg-color) peer"
-                onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ''))}
                 required
               />
               <label
@@ -123,13 +159,16 @@ function Reservation() {
                 Phone Number
               </label>
             </div>
+
             <div className="relative z-0 w-full group">
               <input
                 type="date"
                 name="date"
                 id="date"
                 placeholder=" "
-                className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:border-(--button-hover-bg-color) peer"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               />
               <label
@@ -149,7 +188,9 @@ function Reservation() {
                 name="time"
                 id="time"
                 placeholder=" "
-                className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:border-(--button-hover-bg-color) peer"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               />
               <label
@@ -159,11 +200,14 @@ function Reservation() {
                 Time
               </label>
             </div>
+
             <div className="relative z-0 w-full group">
               <select
                 name="guests"
                 id="guests"
-                className="block py-2.5 px-0 w-full md:max-w-30 lg:max-w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:border-(--button-hover-bg-color) peer"
+                value={guests}
+                onChange={(e) => setGuests(e.target.value)}
+                className="block py-2.5 px-0 w-full md:max-w-30 lg:max-w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               >
                 <option>2 People</option>
@@ -189,7 +233,9 @@ function Reservation() {
               name="special_request"
               id="special_request"
               placeholder=" "
-              className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:border-(--button-hover-bg-color) peer"
+              value={specialRequest}
+              onChange={(e) => setSpecialRequest(e.target.value)}
+              className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
             ></textarea>
             <label
               htmlFor="special_request"
@@ -200,20 +246,35 @@ function Reservation() {
           </div>
 
           {/* Submit Button */}
-          <button          
+          <button
             type="submit"
             className="w-full text-white bg-(--button-bg-color) hover:text-(--button-hover-text-color) border border-(--button-bg-color) hover:border-(--button-hover-bg-color) hover:bg-transparent font-medium rounded-lg text-sm px-4 py-3 focus:outline-none shadow-md"
           >
             {loading ? (
-                    <span className="flex items-center justify-center">
-                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                      </svg>
-                    </span>
-                  ) : (
-                    "Confirm Reservation"
-                  )}
+              <span className="flex items-center justify-center">
+                <svg
+                  className="animate-spin h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  />
+                </svg>
+              </span>
+            ) : (
+              "Confirm Reservation"
+            )}
           </button>
         </form>
       </section>

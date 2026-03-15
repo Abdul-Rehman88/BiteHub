@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { RegisterUser } from "../../firebase/auth"  
 import toast from "react-hot-toast";
-import Button from "../../components/button/Button";
+import {Button,PhoneInput} from "../../components/component_index.js"
 function SignUp() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [phone, setPhone] = useState("");
@@ -11,20 +11,13 @@ function SignUp() {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] =useState("");
 
+
   const togglePassword = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  // Allow only numbers & max 11 digits
-  const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/\D/g, ""); // remove non-digits
-    if (value.length <= 11) {
-      setPhone(value);
-    }
-  };
-
   const handleSubmit = async (e) => {
-    e.preventDefault();          // prevent page reload
+    e.preventDefault();          
     try {
     // Call your Firebase function
     await RegisterUser(name, phone, email, password);
@@ -105,14 +98,9 @@ function SignUp() {
               <label className="block text-sm font-medium mb-1 text-(--text-color)">
                 Phone Number
               </label>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]{11}"
-                required
+              <PhoneInput
                 value={phone}
-                onChange={handlePhoneChange}
-                placeholder="03XXXXXXXXX"
+                setValue={setPhone}
                 className="h-11 w-full rounded-lg border border-gray-400 px-4 text-sm text-(--text-color) placeholder:text-gray-400 
                 focus:outline-none focus:border-(--button-hover-bg-color) transition"
               />

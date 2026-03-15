@@ -1,27 +1,36 @@
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeItem, updateitem } from "../../store/Cart.js";
+import { removeItem, updateitem,clearCart } from "../../store/Cart.js";
 import toast from "react-hot-toast";
-import Button from "../../components/button/Button.jsx";
+import {Button,PhoneInput} from "../../components/component_index.js"
 import { Link } from "react-router-dom";
+import order from "../../firebase/order.js";
+
 
 function Cart() {
-  const cartItems = useSelector((state) => state.cart.item) || [];
-  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
+  const [phone, setPhone] = useState("")
+  const [address, setAddress] = useState("")
+  const cartItems = useSelector((state) => state.cart.item) || [];
+  const [showError, setShowError]= useState(false)
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  
 
-  // safe totals
+  // totals
   const subTotal = cartItems.length
-    ? cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-    : 0;
-
+  ? cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  : 0;
   const deliveryFee = cartItems.length ? 150 : 0;
   const total = subTotal + deliveryFee;
 
+  //  remove item from cart
   const handleRemoveFromCart = (item) => {
     dispatch(removeItem(item));
     toast.success (`${item.name} Remove successfully`)
   };
 
+  // add quantity in cart
   const handleUpdateQuantity = (item, newQuantity) => {
     if (newQuantity < 1) return; // prevent below 1
 
@@ -30,10 +39,42 @@ function Cart() {
     } else if (newQuantity < item.quantity) {
       toast.success(`${item.name} quantity decreased!`);
     }
-
     dispatch(updateitem({ ...item, quantity: newQuantity }));
   };
 
+  // order the food
+ const handleOrderSubmit = async () => {
+  let missingFields = [];
+  if (!phone) missingFields.push("Phone Number");
+  if (!address) missingFields.push("Address");
+
+  if (missingFields.length > 0) {
+    toast.error(`Please add: ${missingFields.join("& ")}`);
+    return;
+    }
+    if (phone.length !==11){
+      setShowError(true)
+      return
+    }else{
+      setShowError(false)
+    }
+  
+  setLoading(true); 
+  try {
+    await order(cartItems, total, phone, address, user);
+    dispatch(clearCart()); // optional
+    setPhone("");
+    setAddress("");
+  
+  } catch(error) {
+    toast.error("Something went wrong while placing the order",error);
+  
+  }finally{
+    setLoading(false)
+  }
+};
+
+  // {if user is not login display the this section }
   if (!user) {
         return (
             <div className="text-center py-20">
@@ -46,7 +87,6 @@ function Cart() {
             </div>
         );
     }
-
 
   return (
     <>
@@ -120,12 +160,11 @@ function Cart() {
                   <label className="block text-sm font-medium mb-1">
                     Phone Number
                   </label>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
+                  <PhoneInput
+                    value={phone}
+                    setValue={setPhone}
+                    showError={showError}
                     className="w-full border border-gray-300  rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-(--button-hover-bg-color)"
-                    placeholder="Enter your phone number"
                   />
                 </div>
                 <div className="mb-4">
@@ -136,6 +175,8 @@ function Cart() {
                     type="text"
                     className="w-full border border-gray-300 rounded-lg p-2.5  focus:outline-none focus:ring-2 focus:ring-(--button-hover-bg-color)"
                     placeholder="Enter your delivery address"
+                    value={address}
+                    onChange={(e)=>setAddress(e.target.value)}
                   />
                 </div>
 
@@ -144,6 +185,7 @@ function Cart() {
           </div>
 
           {/* order Summary */}
+            
           <div className="w-full md:w-2/6 bg-white p-6 lg:p-8 rounded-lg shadow-lg space-y-6 sticky top-1">
             <h4 className="text-xl font-semibold text-(--heading-color)">
               Order Summary
@@ -167,10 +209,38 @@ function Cart() {
             </div>
             <div className="flex flex-col gap-3">
 
-            <Button className="w-full text-(--white-color) hover:text-(--button-text-color) hover:bg-transparent">Place Order</Button>
+            <Button onClick={handleOrderSubmit} 
+              className="w-full text-(--white-color) hover:text-(--button-text-color) hover:bg-transparent"
+            >
+              {loading ? (
+              <span className="flex items-center justify-center">
+                <svg
+                  className="animate-spin h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  />
+                </svg>
+              </span>
+              ) : (
+              "Place Order"
+              )}
+            </Button>  
             <p className="text-xs text-gray-400">Estimated delivery time: 30-45 minutes</p>
             </div>
-          </div>
+          </div>            
         </div>
       )}
     </>

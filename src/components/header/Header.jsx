@@ -10,7 +10,7 @@ const ResponsiveNavbar = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
-  console.log("Current user in header:", user); 
+  // console.log("Current user in header:", user); 
 
   const handleLogout = () => {
     logoutUser();

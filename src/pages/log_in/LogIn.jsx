@@ -1,10 +1,11 @@
-import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { loginUser } from "../../firebase/auth"
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/authSlice";
 import Button from "../../components/button/Button";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase/firebaseConfig"; 
 
 function LogIn() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -16,34 +17,49 @@ function LogIn() {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleSubmit = (e) => {
+  // Gets a Firestore doc by collection & UID for user name 
+  const fetchFirestoreDoc = async (collectionName, uid) => {
+    const docRef = doc(db, collectionName, uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        return docSnap.data();
+    } else {
+        return null;
+    }
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true); //
     setError(null);
 
     const email = e.target.email.value;
     const password = e.target.password.value;
-    loginUser(email, password)
-      .then((user) => {
-        dispatch(setUser({
-          uid: user.uid,
-          email: user.email,
-        })); // Store user in Redux
-        window.location.href = "/"; // Redirect to home page after successful login
-      })
-      .catch((error) => {
+    
+    try {
+      const user = await loginUser(email,password);
+      const userName = await fetchFirestoreDoc("users",user.uid)
+      
+      dispatch(setUser({
+        uid: user.uid,
+        email: user.email,
+        name: userName.name
+      }));
+      window.location.href = "/"; // Redirect to home page after successful login
+    } catch (error) {
+      
+    
         if (error.code === "auth/invalid-credential") {
-          setError("Invalid email or password."); // ✅ wrong password or email
+          setError("Invalid email or password."); // wrong password or email
         } else  {
           console.error("Login error:", error);
-          // setError("An error occurred during login. Please try again."); // ✅ generic error message
+          // setError("An error occurred during login. Please try again."); // generic error message
         }
-      })
-      .finally(() => {
-          setLoading(false); // ✅ stop loading when done
-      });  
-  };
-
+      }finally {
+          setLoading(false); // stop loading when done
+      }
+  }
   return (
     <>
       <div className="flex justify-center items-center px-5 lg:px-[50px] md:px-[30px] py-[30px] md:py-[50px] lg:py-20 bg-(--bg-color)">
@@ -59,7 +75,7 @@ function LogIn() {
           </div>
 
           <div className="grid gap-6">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleLogin}>
               <div className="grid gap-4">
                 {/* Email */}
                 <div className="grid gap-2">

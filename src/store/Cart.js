@@ -32,14 +32,19 @@ const cart = createSlice({
                 return i
             })
         },
-
-        extraReducers: (builder) => {
+        
+        clearCart: (state)=>{
+            state.item = []
+        },
+        
+        extraRaeducers: (builder) => {
         builder.addCase(clearUser, (state) => {
-            state.items = []; // ✅ auto clear cart when user logs out
+            state.item= []; // auto clear cart when user logs out
         });
+            
     }
     }
 })
 
-export const {addItem, removeItem, updateitem} = cart.actions
+export const {addItem, removeItem, updateitem, clearCart} = cart.actions
 export default cart.reducer
