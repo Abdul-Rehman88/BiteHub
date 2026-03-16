@@ -3,8 +3,11 @@ import Layout from './components/layout/Layout'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import {Home,Reservation, Menu,Cart,LogIn,SignUp } from './pages/index.jsx'
 import { Toaster } from 'react-hot-toast';
+import useCartSync from './hook/useCartSync';
 
 function App() {
+  // Enable cart sync across devices and sessions
+  useCartSync();
 
   return (
     <>
@@ -22,7 +25,7 @@ function App() {
         </Layout>
       </Router>
     </>
- 
+  
 )
 }
 

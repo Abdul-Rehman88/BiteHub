@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeItem, updateitem,clearCart } from "../../store/Cart.js";
+import { removeItems, updateItems,clearCart } from "../../store/Cart.js";
 import toast from "react-hot-toast";
 import {Button,PhoneInput} from "../../components/component_index.js"
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ function Cart() {
   const user = useSelector((state) => state.user.user);
   const [phone, setPhone] = useState("")
   const [address, setAddress] = useState("")
-  const cartItems = useSelector((state) => state.cart.item) || [];
+  const cartItems = useSelector((state) => state.cart.items) || [];
   const [showError, setShowError]= useState(false)
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -26,7 +26,7 @@ function Cart() {
 
   //  remove item from cart
   const handleRemoveFromCart = (item) => {
-    dispatch(removeItem(item));
+    dispatch(removeItems(item));
     toast.success (`${item.name} Remove successfully`)
   };
 
@@ -39,7 +39,7 @@ function Cart() {
     } else if (newQuantity < item.quantity) {
       toast.success(`${item.name} quantity decreased!`);
     }
-    dispatch(updateitem({ ...item, quantity: newQuantity }));
+    dispatch(updateItems({ ...item, quantity: newQuantity }));
   };
 
   // order the food
