@@ -6,7 +6,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } f
 export const RegisterUser = async (name, phone, email,password) => {
     
     try {
-        const userCredientails = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
         
         if (auth.currentUser) {
             await setDoc(doc(db, "users", auth.currentUser.uid), {
@@ -15,8 +15,8 @@ export const RegisterUser = async (name, phone, email,password) => {
                 phone: phone
             });
         }
-        console.log("User registered successfully:", userCredientails.user);
-        return userCredientails.user;
+        console.log("User registered successfully:", userCredentials.user);
+        return userCredentials.user;
     }catch (error) {
         console.error("Error registering user:", error);
         throw error;
@@ -26,8 +26,8 @@ export const RegisterUser = async (name, phone, email,password) => {
 // {log in}
 export const loginUser = async (email,password) => {
     try {
-        const userCredientails = await signInWithEmailAndPassword(auth, email, password);
-        return userCredientails.user;
+        const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+        return userCredentials.user;
     }catch (error) {
         console.error("Error logging in user:", error);
         throw error;

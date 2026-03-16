@@ -3,7 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig.js";
 import { Card } from "../component_index";
 import { useDispatch } from "react-redux";
-import { addItem } from "../../store/Cart.js";
+import { addItems} from "../../store/Cart.js";
 import toast from "react-hot-toast";
 import useRequireAuth from "../../hook/useRequireAuth.js"
 
@@ -17,7 +17,7 @@ export default function Tab() {
 
     const handleAddToCart =(item)=>{
         if(!checkAuth())return;
-        dispatch(addItem(item))
+        dispatch(addItems(item))
         toast.success(`${item.name} added to cart successfully!`);
     }
     
