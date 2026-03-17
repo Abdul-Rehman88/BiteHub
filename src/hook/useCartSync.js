@@ -16,7 +16,7 @@ export const useCartSync = () => {
         const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
             if (currentUser) {
                 // User logged in - fetch cart from Firestore
-                console.log("User logged in, fetching cart from Firestore");
+                // console.log("User logged in, fetching cart from Firestore");
                 dispatch(fetchCartFromFirestore());
             }
         });
@@ -29,16 +29,14 @@ export const useCartSync = () => {
         if (!user?.uid) {
             return;
         }
-
-        console.log("Setting up real-time cart sync for user:", user.uid);
         
         const unsubscribe = subscribeToCartUpdates(user.uid, (items) => {
-            console.log("Received cart update from Firestore:", items);
+            // console.log("Received cart update from Firestore:", items);
             dispatch(setCartItems(items));
         });
 
         return () => {
-            console.log("Cleaning up cart subscription");
+            // console.log("Cleaning up cart subscription");
             unsubscribe();
         };
     }, [user?.uid, dispatch]);
@@ -58,8 +56,6 @@ export const useCartSync = () => {
         if (timeSinceLastSync < 1000) {
             return;
         }
-
-        console.log("Cart changed, syncing to Firestore:", cartItems);
         
         // Debounce the sync
         const timeoutId = setTimeout(() => {

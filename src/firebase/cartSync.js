@@ -5,7 +5,7 @@ import { db, auth } from "./firebaseConfig";
 export const saveCartToFirestore = async (items) => {
     try {
         if (!auth.currentUser) {
-            console.log("No user logged in, skipping Firestore save");
+            // console.log("No user logged in, skipping Firestore save");
             return;
         }
         
@@ -15,7 +15,7 @@ export const saveCartToFirestore = async (items) => {
             updatedAt: Date.now()
         }, { merge: true });
         
-        console.log("Cart saved to Firestore successfully");
+        // console.log("Cart saved to Firestore successfully");
     } catch (error) {
         console.error("Error saving cart to Firestore:", error);
     }
@@ -25,7 +25,7 @@ export const saveCartToFirestore = async (items) => {
 export const loadCartFromFirestore = async () => {
     try {
         if (!auth.currentUser) {
-            console.log("No user logged in, skipping Firestore load");
+            // console.log("No user logged in, skipping Firestore load");
             return null;
         }
         
@@ -34,10 +34,10 @@ export const loadCartFromFirestore = async () => {
         
         if (cartSnap.exists()) {
             const cartData = cartSnap.data();
-            console.log("Cart loaded from Firestore:", cartData.items);
+            // console.log("Cart loaded from Firestore:", cartData.items);
             return cartData.items;
         } else {
-            console.log("No cart found in Firestore");
+            // console.log("No cart found in Firestore");
             return null;
         }
     } catch (error) {
