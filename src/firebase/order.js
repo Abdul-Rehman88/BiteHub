@@ -1,6 +1,7 @@
 import { addDoc,collection,} from "firebase/firestore";
 import {db} from "./firebaseConfig"
 import toast from "react-hot-toast";
+import { serverTimestamp } from "firebase/firestore";
 
 
 const order = async(items, total, phoneNumber, address, user)=>{
@@ -10,8 +11,9 @@ const order = async(items, total, phoneNumber, address, user)=>{
             total,
             phoneNumber,
             address,
+            status: "preparing",
             user,
-            orderTime: Date.now()
+            orderTime: serverTimestamp()
         }
         await addDoc(collection(db,"orders"), orderData)
         toast.success("Order Place Successfully")

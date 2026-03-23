@@ -15,7 +15,7 @@ function Reservation() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [reservationTime, setreservationTime] = useState("");
   const [guests, setGuests] = useState("2 People");
   const [specialRequest, setSpecialRequest] = useState("");
   const [showError, setShowError]= useState(false)
@@ -42,7 +42,7 @@ function Reservation() {
         email,
         phone,
         date,
-        time,
+        reservationTime,
         guests,
         specialRequest,
         user,
@@ -53,7 +53,7 @@ function Reservation() {
       setEmail("");
       setPhone("");
       setDate("");
-      setTime("");
+      setreservationTime("");
       setGuests("2 People");
       setSpecialRequest("");
 
@@ -180,21 +180,21 @@ function Reservation() {
             </div>
           </div>
 
-          {/* Row 3: Time & Guests */}
+          {/* Row 3: reservationTime & Guests */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative z-0 w-full group">
               <input
                 type="time"
-                name="time"
-                id="time"
+                name="reservationTime"
+                id="reservationTime"
                 placeholder=" "
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
+                value={reservationTime}
+                onChange={(e) => setreservationTime(e.target.value)}
                 className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               />
               <label
-                htmlFor="time"
+                htmlFor="reservationTime"
                 className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
                 Time
