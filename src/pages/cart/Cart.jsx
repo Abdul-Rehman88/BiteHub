@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import {Button,PhoneInput} from "../../components/component_index.js"
 import { Link } from "react-router-dom";
 import order from "../../firebase/order.js";
+import { clearCartFromFirebase } from "../../store/Cart.js";
 
 
 function Cart() {
@@ -62,7 +63,8 @@ function Cart() {
   setLoading(true); 
   try {
     await order(cartItems, total, phone, address, user);
-    dispatch(clearCart()); // optional
+    dispatch(clearCart()); 
+    dispatch(clearCartFromFirebase()); 
     setPhone("");
     setAddress("");
   

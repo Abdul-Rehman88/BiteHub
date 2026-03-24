@@ -1,7 +1,6 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebaseConfig";
-
-
+ 
 export const createReservation = async (name, email, phone, date, reservationTime, guests, specialRequest, user) => {
     try {
         const reservationData = {
@@ -14,6 +13,7 @@ export const createReservation = async (name, email, phone, date, reservationTim
             specialRequest,
             status: "scheduled",
             user,
+            requestTime: serverTimestamp()
         };
         await addDoc(collection(db, "reservations"), reservationData);
     } catch (error) {

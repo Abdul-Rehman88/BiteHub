@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StatCard, DataTable, StatusDropdown, StatCardSkeleton, TableSkeleton, } from "../components/adminComponentIndex.js";
 import { db } from "../../firebase/firebaseConfig.js";
-import { doc, updateDoc, collection, getDocs, query, orderBy, limit, } from "firebase/firestore";
+import { doc, updateDoc, collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
 
 function Dashboard() {
   // ─── Loading States ─────────────────────────
@@ -34,128 +34,119 @@ function Dashboard() {
   // ─── Fetch Functions ───────────────────────
   
   // fetch stats
-  const fetchStats = async () => {
-    setStatsLoading(true);
-    try {
-      const ordersSnapshot = await getDocs(collection(db, "orders"));
-      const orders = ordersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      const completedOrders = orders.filter((o) => o.status === "completed");
-      const totalOrders = completedOrders.length;
-      const totalRevenue = completedOrders.reduce((acc, o) => acc + (o.total || 0), 0);
+ useEffect(() => {
+  setStatsLoading(true);
 
-      const reservationsSnapshot = await getDocs(collection(db, "reservations"));
-      const reservations = reservationsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      const totalReservations = reservations.filter((r) => r.status === "completed").length;
+  let ordersData = [];
+  let reservationsData = [];
+  let menuCount = 0;
 
-      const menuSnapshot = await getDocs(collection(db, "menuItems"));
-      const totalMenuItems = menuSnapshot.size;
+  const calculateStats = () => {
+    const completedOrders = ordersData.filter(o => o.status === "completed");
+    const totalRevenue = completedOrders.reduce(
+      (acc, o) => acc + (o.total || 0),
+      0
+    );
 
-      setStats([
-        { label: "Total Orders", value: totalOrders },
-        { label: "Total Revenue", value: `Rs. ${totalRevenue}` },
-        { label: "Reservations", value: totalReservations },
-        { label: "Menu Items", value: totalMenuItems },
-      ]);
-    } finally {
-      setStatsLoading(false);
-    }
+    const completedReservations = reservationsData.filter(
+      r => r.status === "completed"
+    ).length;
+
+    setStats([
+      { label: "Total Orders", value: completedOrders.length },
+      { label: "Total Revenue", value: `Rs. ${totalRevenue}` },
+      { label: "Reservations", value: completedReservations },
+      { label: "Menu Items", value: menuCount },
+    ]);
+
+    setStatsLoading(false);
   };
+
+  const unsubscribeOrders = onSnapshot(collection(db, "orders"), (snapshot) => {
+    ordersData = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    calculateStats();
+  });
+
+  const unsubscribeReservations = onSnapshot(
+    collection(db, "reservations"),
+    (snapshot) => {
+      reservationsData = snapshot.docs.map(doc => doc.data());
+      calculateStats();
+    }
+  );
+
+  const unsubscribeMenu = onSnapshot(collection(db, "menuItems"), (snapshot) => {
+    menuCount = snapshot.size;
+    calculateStats();
+  });
+
+  return () => {
+    unsubscribeOrders();
+    unsubscribeReservations();
+    unsubscribeMenu();
+  };
+}, []);
 
   // fetch orders
-  const fetchRecentOrders = async () => {
-    setOrdersLoading(true);
-    try {
-      const ordersQuery = query(collection(db, "orders"), orderBy("orderTime", "desc"), limit(5));
-      const snapshot = await getDocs(ordersQuery);
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setRecentOrders(data);
-    } finally {
-      setOrdersLoading(false);
-    }
-  };
+
+useEffect(() => {
+  const q = query(
+    collection(db, "orders"),
+    orderBy("orderTime", "desc"),
+    limit(5)
+  );
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    setRecentOrders(data);
+    setOrdersLoading(false);
+  });
+
+  return () => unsubscribe();
+}, []);
 
   // fetch reservation
-  const fetchRecentReservations = async () => {
-    setReservationsLoading(true);
-    try {
-      const reservationsQuery = query(
-        collection(db, "reservations"),
-        orderBy("reservationTime", "desc"),
-        limit(5)
-      );
-      const snapshot = await getDocs(reservationsQuery);
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setRecentReservations(data);
-    } finally {
-      setReservationsLoading(false);
-    }
-  };
+   useEffect(() => {
+  const q = query(
+    collection(db, "reservations"),
+    orderBy("requestTime", "desc"),
+    limit(5)
+  );
 
-  // ─── Load Data on Mount ───────────────────
-  useEffect(() => {
-    fetchStats();
-    fetchRecentOrders();
-    fetchRecentReservations();
-  }, []);
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    setRecentReservations(data);
+    setReservationsLoading(false);
+  });
+
+  return () => unsubscribe();
+}, []);
+
+
 
   // ─── Update Order Status ──────────────────
   const updateOrderStatus = async (id, newStatus) => {
-    try {
-      const oldOrder = recentOrders.find((o) => o.id === id);
-      await updateDoc(doc(db, "orders", id), { status: newStatus });
-
-      // Update table row
-      setRecentOrders((prev) =>
-        prev.map((o) => (o.id === id ? { ...o, status: newStatus } : o))
-      );
-
-      // Update stats dynamically
-      setStats((prevStats) =>
-        prevStats.map((stat) => {
-          if (stat.label === "Total Orders") {
-            if (oldOrder.status !== "completed" && newStatus === "completed")
-              return { ...stat, value: stat.value + 1 };
-            if (oldOrder.status === "completed" && newStatus !== "completed")
-              return { ...stat, value: stat.value - 1 };
-          }
-          if (stat.label === "Total Revenue") {
-            const currentRevenue = parseInt(stat.value.toString().replace("Rs. ", ""));
-            if (oldOrder.status !== "completed" && newStatus === "completed")
-              return { ...stat, value: `Rs. ${currentRevenue + (oldOrder.total || 0)}` };
-            if (oldOrder.status === "completed" && newStatus !== "completed")
-              return { ...stat, value: `Rs. ${currentRevenue - (oldOrder.total || 0)}` };
-          }
-          return stat;
-        })
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  try {
+    await updateDoc(doc(db, "orders", id), { status: newStatus });
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   // ─── Update Reservation Status ─────────────
   const updateReservationStatus = async (id, newStatus) => {
     try {
-      const oldRes = recentReservations.find((r) => r.id === id);
       await updateDoc(doc(db, "reservations", id), { status: newStatus });
 
-      // Update table row
-      setRecentReservations((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
-      );
-
-      // Update stats dynamically
-      setStats((prevStats) =>
-        prevStats.map((stat) => {
-          if (stat.label === "Reservations") {
-            if (oldRes.status !== "completed" && newStatus === "completed")
-              return { ...stat, value: stat.value + 1 };
-            if (oldRes.status === "completed" && newStatus !== "completed")
-              return { ...stat, value: stat.value - 1 };
-          }
-          return stat;
-        })
-      );
     } catch (err) {
       console.error(err);
     }
@@ -164,9 +155,7 @@ function Dashboard() {
   // ─── Columns ──────────────────────────────
   const orderColumns = [
     { label: "Customer", key: "user" },
-    {
-    label: "Items Summary",
-    key: "items",
+    { label: "Items Summary", key: "items",
     render: (items) => {
       if (!items || !items.length) return "-";
       // Map each item to "name x quantity"
@@ -174,13 +163,17 @@ function Dashboard() {
         .map(item => `${item.name.split(' ')[0]} x${item.quantity || 1}`) // using name
         .join(", ");
       const display = summary.length > 50 ? summary.slice(0, 50) + "..." : summary;
-      return <span title={summary}>{display}</span>;
+      return <span title={summary}>{display}</span>; },
     },
+  { label: "Phone", key: "phoneNumber" },
+  { label: "Address", key: "address" ,
+    render: (val) => (
+      <span title={val}>{val?.length > 20 ? val.slice(0, 20) + "..." : val}</span>
+    ),
   },
-    { label: "Total", key: "total" },
-    { label: "Phone", key: "phoneNumber" },
-    { label: "Status", key: "status" },
+  { label: "Total(Rs)", key: "total" },
     { label: "Time", key: "orderTime" },
+    { label: "Status", key: "status" },
   ];
 
   const reservationColumns = [
@@ -192,7 +185,7 @@ function Dashboard() {
     { label: "Status", key: "status" },
     { label: "Special Request", key: "specialRequest",
     render: (val) => (
-      <span title={val}>{val?.length > 30 ? val.slice(0, 10) + "..." : val}</span>
+      <span title={val}>{val?.length > 15 ? val.slice(0, 15) + "..." : val}</span>
     ),
     },
   ];
@@ -220,7 +213,7 @@ function Dashboard() {
             items: order.items || "",
             status: (
               <StatusDropdown
-                key={order.id + order.status}
+                key={order.id}
                 value={order.status}
                 onChange={(s) => updateOrderStatus(order.id, s)}
                 options={orderOptions}
@@ -239,12 +232,11 @@ function Dashboard() {
           columns={reservationColumns}
           rows={recentReservations.map((res) => ({
             ...res,
-            // reservationTime: res.reservationTime?.toDate?.()?.toLocaleString() || "",
               specialRequest: res.specialRequest || " ",
 
             status: (
               <StatusDropdown
-                key={res.id + res.status}
+                key={res.id}
                 value={res.status}
                 onChange={(s) => updateReservationStatus(res.id, s)}
                 options={reservationOptions}
