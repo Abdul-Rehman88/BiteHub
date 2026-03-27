@@ -80,7 +80,6 @@ export const clearCartFromFirestore = async () => {
             updatedAt: Date.now()
         });
         
-        console.log("Cart cleared from Firestore");
     } catch (error) {
         console.error("Error clearing cart from Firestore:", error);
     }

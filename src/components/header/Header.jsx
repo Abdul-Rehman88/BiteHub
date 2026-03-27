@@ -3,7 +3,7 @@ import { CiMenuFries } from "react-icons/ci";
 import logo from "../../assets/images/logo2.jpg";
 import { Link, NavLink } from "react-router-dom";
 import { logoutUser } from "../../firebase/auth";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../../store/authSlice";
 
 const ResponsiveNavbar = () => {
@@ -16,6 +16,8 @@ const ResponsiveNavbar = () => {
     logoutUser();
     dispatch(clearUser());
   };
+
+
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Menu", path: "/menu" },

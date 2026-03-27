@@ -1,4 +1,4 @@
-import { setDoc, doc} from "firebase/firestore";
+import { setDoc, doc, serverTimestamp} from "firebase/firestore";
 import { auth, db } from "./firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
@@ -12,10 +12,12 @@ export const RegisterUser = async (name, phone, email,password) => {
             await setDoc(doc(db, "users", auth.currentUser.uid), {
                 name: name,
                 email: email,
-                phone: phone
+                phone: phone,
+                role: "user",
+                createdAt: serverTimestamp()  
+
             });
         }
-        console.log("User registered successfully:", userCredentials.user);
         return userCredentials.user;
     }catch (error) {
         console.error("Error registering user:", error);

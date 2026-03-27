@@ -1,5 +1,8 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../../../firebase/auth";
+import { clearUser } from "../../../store/authSlice";
 
 const navItems = [
   {
@@ -48,6 +51,23 @@ const navItems = [
   },
 ];
 
+const LogoutIcon = () => (
+  <svg
+    className="w-5 h-5 shrink-0"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    viewBox="0 0 24 24"
+    style={{ transform: "rotate(180deg)" }}
+  >
+    <path d="M16 17l5-5-5-5" />
+    <path d="M21 12H9" />
+    <path d="M9 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2z" />
+  </svg>
+);
+
 const HamburgerIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
     <path d="M4 6h16M4 12h16M4 18h16" />
@@ -69,7 +89,7 @@ function NavItem({ item, showLabel, onClick }) {
       title={!showLabel ? item.label : undefined}
       className={({ isActive }) =>
         `group flex items-center rounded-md text-sm font-medium transition-all duration-200
-         ${showLabel ? "gap-3 px-3" : "justify-center px-0"}  //  center icons when collapsed
+         ${showLabel ? "gap-3 px-3" : "justify-center px-0"}
          py-2.5
          ${isActive ? "bg-[#222222] text-(--white-color)" : "text-gray-400 hover:bg-[#1a1a1a] hover:text-(--white-color)"}`
       }
@@ -86,15 +106,14 @@ function NavItem({ item, showLabel, onClick }) {
   );
 }
 
-// Reusable collapsible sidebar for mobile & tablet
-function CollapsibleSidebar({ open, onOpen, onClose, isMobile }) {
+function CollapsibleSidebar({ open, onOpen, onClose, isMobile, onLogout }) {
   return (
     <>
       <aside
         className={`
           ${isMobile
-            ? "md:hidden fixed top-0 left-0 h-full z-40"   // fix 1: explicit positioning for mobile
-            : "hidden md:flex lg:hidden relative z-40"      // fix 2: relative keeps tablet in flow, z-40 above backdrop
+            ? "md:hidden fixed top-0 left-0 h-full z-40"
+            : "hidden md:flex lg:hidden relative z-40"
           }
           flex flex-col bg-[#111111] transition-all duration-300 ease-in-out overflow-hidden
           ${open ? "w-56" : isMobile ? "w-14" : "w-16"}
@@ -120,15 +139,31 @@ function CollapsibleSidebar({ open, onOpen, onClose, isMobile }) {
         </div>
 
         {/* Nav */}
-        {/* Nav */}
-<nav className="flex flex-col gap-1 mt-2 px-2">  {/*  keep small px-2 for breathing room from edge */}
-  {navItems.map((item) => (
-    <NavItem key={item.label} item={item} showLabel={open} onClick={open && isMobile ? onClose : undefined} />
-  ))}
-</nav>
+        <nav className="flex flex-col gap-1 mt-2 px-2 flex-1">
+          {navItems.map((item) => (
+            <NavItem key={item.label} item={item} showLabel={open} onClick={open && isMobile ? onClose : undefined} />
+          ))}
+        </nav>
+
+        {/* Logout */}
+        <div className="px-2 pb-4">
+          <div className="border-t border-white/20 my-4" />
+          <button
+            onClick={onLogout}
+            title={!open ? "Logout" : undefined}
+            className={`group flex items-center w-full rounded-md text-sm font-medium transition-all duration-200
+              ${open ? "gap-3 px-3" : "justify-center px-0"} py-2.5
+              text-gray-400 hover:text-(--white-color) hover:bg-[#1a1a1a]`}
+          >
+            <span className="text-gray-400 group-hover:text-red-500 transition-colors">
+              <LogoutIcon />
+            </span>
+            {open && <span className="whitespace-nowrap">Logout</span>}
+          </button>
+        </div>
       </aside>
 
-      {/* Backdrop — z-30 sits BEHIND the sidebar (z-40) on both */}
+      {/* Backdrop */}
       {open && (
         <div
           onClick={onClose}
@@ -145,6 +180,18 @@ function CollapsibleSidebar({ open, onOpen, onClose, isMobile }) {
 export default function SideBar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [tabletOpen, setTabletOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      dispatch(clearUser());
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -153,6 +200,7 @@ export default function SideBar() {
         open={mobileOpen}
         onOpen={() => setMobileOpen(true)}
         onClose={() => setMobileOpen(false)}
+        onLogout={handleLogout}
         isMobile
       />
 
@@ -161,6 +209,7 @@ export default function SideBar() {
         open={tabletOpen}
         onOpen={() => setTabletOpen(true)}
         onClose={() => setTabletOpen(false)}
+        onLogout={handleLogout}
         isMobile={false}
       />
 
@@ -170,11 +219,24 @@ export default function SideBar() {
           <span className="text-(--button-hover-text-color)">Bite</span>
           <span className="text-(--white-color)">Hub</span>
         </div>
-        <nav className="flex flex-col gap-1">
+
+        <nav className="flex flex-col gap-1 flex-1">
           {navItems.map((item) => (
             <NavItem key={item.label} item={item} showLabel />
           ))}
         </nav>
+
+        <div className="border-t border-white/20 my-4" />
+
+        <button
+          onClick={handleLogout}
+          className="flex items-center group gap-3 px-3 py-2.5 text-sm text-gray-400 hover:text-(--white-color) hover:bg-[#1a1a1a] rounded-md transition-all duration-200 w-full justify-start"
+        >
+          <span className="text-gray-400 group-hover:text-red-500 transition-colors">
+            <LogoutIcon />
+          </span>
+          Logout
+        </button>
       </aside>
     </>
   );

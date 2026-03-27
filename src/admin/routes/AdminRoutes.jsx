@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import AdminLayout from "../components/layout/AdminLayout";
-import { Orders, Menu, Reservations, Dashboard } from "../pages/index";
+import { Orders, Menu, Reservations, Dashboard } from "../pages";
 
 const AdminRoutes = () => {
   return (

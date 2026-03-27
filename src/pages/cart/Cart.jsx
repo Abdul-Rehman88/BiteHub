@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import order from "../../firebase/order.js";
 import { clearCartFromFirebase } from "../../store/Cart.js";
 
-
 function Cart() {
   const user = useSelector((state) => state.user.user);
   const [phone, setPhone] = useState("")
@@ -16,8 +15,6 @@ function Cart() {
   const [showError, setShowError]= useState(false)
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  
-
   // totals
   const subTotal = cartItems.length
   ? cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
@@ -75,20 +72,6 @@ function Cart() {
     setLoading(false)
   }
 };
-
-  // {if user is not login display the this section }
-  if (!user) {
-        return (
-            <div className="text-center py-20">
-                <p className="text-lg text-gray-500">Please login to view your cart</p>
-                <Link to="/LogIn" className="mt-4 inline-block bg-[#FFB703] px-6 py-2 rounded-full transition-all duration-150
-                  active:scale-95 active:translate-y-0.5 hover:bg-transparent text-(--white-color) hover:text-(--button-text-color) 
-                  border border-[#FFB703] hover:border-[#E09A05]">
-                    Sign In
-                </Link>
-            </div>
-        );
-    }
 
   return (
     <>

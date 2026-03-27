@@ -31,29 +31,3 @@ function DataTable({ title, columns, rows }) {
 }
 
 export default DataTable
-
-// Usage example:
-//
-// const orderColumns = [
-//   { key: 'customer', label: 'Customer' },
-//   { key: 'phone',    label: 'Phone' },
-//   { key: 'address',  label: 'Address' },
-//   { key: 'items',    label: 'Items' },
-//   {
-//     key: 'status',
-//     label: 'Status',
-//     render: (val) => (
-//       <span className={`px-2 py-1 rounded-full text-xs text-white
-//         ${val === 'Delivered' ? 'bg-green-500' : 'bg-orange-500'}`}>
-//         {val}
-//       </span>
-//     ),
-//   },
-// ]
-//
-// const orderRows = [
-//   { customer: 'Ali', phone: '03123456789', address: 'Baldia Town', items: 'Pizza x2', status: 'Pending' },
-//   { customer: 'Ahmed', phone: '03123456789', address: 'Baldia Town', items: 'Burger x1', status: 'Delivered' },
-// ]
-//
-// <DataTable title="Recent Orders" columns={orderColumns} rows={orderRows} />

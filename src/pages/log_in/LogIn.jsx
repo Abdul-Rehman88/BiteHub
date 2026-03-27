@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation  } from "react-router-dom";
 import { loginUser } from "../../firebase/auth"
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/authSlice";
@@ -11,6 +11,9 @@ function LogIn() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/"; 
   const dispatch = useDispatch();
 
   const togglePassword = () => {
@@ -30,36 +33,41 @@ function LogIn() {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true); //
-    setError(null);
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-    
-    try {
-      const user = await loginUser(email,password);
-      const userName = await fetchFirestoreDoc("users",user.uid)
-      
-      dispatch(setUser({
-        uid: user.uid,
-        email: user.email,
-        name: userName.name
-      }));
-      window.location.href = "/"; // Redirect to home page after successful login
-    } catch (error) {
-      
-    
-        if (error.code === "auth/invalid-credential") {
-          setError("Invalid email or password."); // wrong password or email
-        } else  {
-          console.error("Login error:", error);
-          // setError("An error occurred during login. Please try again."); // generic error message
-        }
-      }finally {
-          setLoading(false); // stop loading when done
-      }
+  const email = e.target.email.value;
+  const password = e.target.password.value;
+
+  try {
+    const user = await loginUser(email, password);
+    const userDoc = await fetchFirestoreDoc("users", user.uid);
+    const role = userDoc?.role || "user";
+    const name = userDoc?.name || "";
+
+    dispatch(setUser({ uid: user.uid, email: user.email, name, role }));
+
+    // Check previous path
+    let redirectTo = from; // default from state
+
+    // If user is not admin, don't allow admin route
+    if (role !== "admin" && redirectTo.startsWith("/admin")) {
+      redirectTo = "/"; // or you can set to "/cart" if you want
+    }
+
+    // If admin, go to admin dashboard always
+    if (role === "admin") redirectTo = "/admin";
+
+    navigate(redirectTo, { replace: true });
+
+  } catch (error) {
+    setError("Login failed. Please check your credentials.");
+    console.error(error);
+  } finally {
+    setLoading(false);
   }
+};
   return (
     <>
       <div className="flex justify-center items-center px-5 lg:px-[50px] md:px-[30px] py-[30px] md:py-[50px] lg:py-20 bg-(--bg-color)">

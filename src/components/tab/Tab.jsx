@@ -17,7 +17,6 @@ export default function Tab() {
 
     const handleAddToCart =(item)=>{
         if(!checkAuth())return;
-        console.log("item");
         dispatch(addItems(item))
         toast.success(`${item.name} added to cart successfully!`);
     }
