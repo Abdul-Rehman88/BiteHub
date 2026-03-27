@@ -265,7 +265,7 @@ useEffect(() => {
   return (
     <>
       {/* Form */}
-      <div className="bg-(--bg-color) p-5 md:6 lg:10 rounded-lg shadow mb-6">
+      <div className="bg-(--bg-color) p-5 md:p-8 lg:p-10 rounded-lg shadow mb-6">
         <h2 className="text-xl font-bold mb-4">
           {editItemId ? "Edit Menu Item" : "Add Menu Item"}
         </h2>
@@ -358,12 +358,12 @@ useEffect(() => {
           </div>
         </form>
       </div>
-
+     
       {/* Filters */}
       <div className="flex flex-row gap-4 mb-5 items-start md:items-center">
         <input
           type="text"
-          placeholder="Search   "
+          placeholder="Search"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           className="border p-2 rounded flex-1 focus:outline-none focus:ring-2 focus:ring-(--button-hover-bg-color) focus:border-(--button-hover-bg-color)"
