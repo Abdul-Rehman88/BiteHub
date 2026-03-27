@@ -23,7 +23,8 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // Allow uppercase constants (e.g., API_KEY) and internal underscore-prefixed variables
+      'no-unused-vars': ['error', { varsIgnorePattern: '^(_|[A-Z_])' }],
     },
   },
 ])

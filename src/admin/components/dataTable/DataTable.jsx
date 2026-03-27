@@ -15,10 +15,10 @@ function DataTable({ title, columns, rows }) {
           </thead>
           <tbody>
             {rows.map((row, rowIndex) => (
-              <tr key={rowIndex}>
+              <tr key={row.id || rowIndex}>
                 {columns.map((col) => (
                   <td key={col.key} className="px-3 py-2">
-                    {col.render ? col.render(row[col.key]) : row[col.key]}
+                    {col.render ? col.render(row[col.key], row) : row[col.key]}
                   </td>
                 ))}
               </tr>

@@ -1,5 +1,6 @@
 // Images
 import heroSectionHome from "./images/hero-section-home.webp";
+import img_placeholder from "./images/img_placeholder.webp"
 
 // Icons
 import freshIngredients from "./icons/fresh-Ingredients.svg";
@@ -11,6 +12,7 @@ import affordablePrices from "./icons/affordable-prices.svg";
 
 export {
   heroSectionHome,
+  img_placeholder,
   freshIngredients,
   fastDelivery,
   diverseMenu,
