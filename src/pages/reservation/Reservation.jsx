@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import heroSectionReservation from "../../assets/images/Reservation-hero.webp";
 import reservationFormImge from "../../assets/images/reservation-form-image.webp";
 import { createReservation } from "../../firebase/reservation";
@@ -6,9 +6,12 @@ import toast from "react-hot-toast";
 import useRequireAuth from "../../hook/useRequireAuth";
 import { PhoneInput } from "../../components/component_index.js";
 import { useSelector } from "react-redux";
+import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
+import { db } from "../../firebase/firebaseConfig";
+import { DataTable, TableSkeleton } from "../../admin/components/adminComponentIndex.js";
 
 function Reservation() {
-  const user = useSelector((state)=>state.user.user)
+  const user = useSelector((state) => state.user.user);
   const [loading, setLoading] = useState(false);
   const checkAuth = useRequireAuth();
   const [name, setName] = useState("");
@@ -18,17 +21,49 @@ function Reservation() {
   const [reservationTime, setreservationTime] = useState("");
   const [guests, setGuests] = useState("2 People");
   const [specialRequest, setSpecialRequest] = useState("");
-  const [showError, setShowError]= useState(false)
+  const [showError, setShowError] = useState(false);
+
+  // reservations list state
+  const [userReservations, setUserReservations] = useState([]);
+  const [reservationsLoading, setReservationsLoading] = useState(true);
+
+  // fetch user's reservations in real-time
+useEffect(() => {
+  if (!user?.uid) {
+    setUserReservations([]);
+    setReservationsLoading(false);
+    return;
+  }
+
+  const q = query(
+    collection(db, "reservations"),
+    where("user.uid", "==", user.uid),
+    orderBy("requestTime", "desc")
+  );
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const reservations = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      requestTime: doc.data().requestTime?.toDate?.()?.toLocaleString() || "—",
+    }));
+    setUserReservations(reservations);
+    setReservationsLoading(false);
+  });
+
+  return () => unsubscribe();
+}, [user]);
 
   const handleReservation = async (e) => {
     e.preventDefault();
-    
-    if (phone.length !==11){
-      setShowError(true)
-      return
-    }else{
-      setShowError(false)
+
+    if (phone.length !== 11) {
+      setShowError(true);
+      return;
+    } else {
+      setShowError(false);
     }
+
     setLoading(true);
 
     if (!checkAuth()) {
@@ -38,17 +73,10 @@ function Reservation() {
 
     try {
       await createReservation(
-        name,
-        email,
-        phone,
-        date,
-        reservationTime,
-        guests,
-        specialRequest,
-        user,
+        name, email, phone, date,
+        reservationTime, guests, specialRequest, user,
       );
       toast.success("Your reservation has been submitted successfully!");
-      //  Reset form after submission
       setName("");
       setEmail("");
       setPhone("");
@@ -56,16 +84,78 @@ function Reservation() {
       setreservationTime("");
       setGuests("2 People");
       setSpecialRequest("");
-
     } catch (error) {
       console.error("Error submitting reservation:", error);
       toast.error("Failed to submit reservation. Please try again.");
-      setLoading(false);
-      
     } finally {
       setLoading(false);
     }
   };
+
+  // DataTable column definitions
+  const reservationColumns = [
+    {
+      key: "requestTime",
+      label: "Booked On",
+    },
+    {
+      key: "name",
+      label: "Name",
+    },
+    {
+      key: "date",
+      label: "Date",
+    },
+    {
+      key: "reservationTime",
+      label: "Time",
+    },
+    {
+      key: "guests",
+      label: "Guests",
+    },
+    {
+      key: "phone",
+      label: "Phone",
+    },
+    {
+      key: "specialRequest",
+      label: "Special Request",
+      render: (val) => val || "—",
+    },
+{
+  key: "status",
+  label: "Status",
+  render: (val) => {
+    const styles = {
+      scheduled: {
+        dot: "bg-yellow-400",
+        badge: "bg-yellow-50 text-yellow-800 border border-yellow-200",
+      },
+      completed: {
+        dot: "bg-green-400",
+        badge: "bg-green-50 text-green-800 border border-green-200",
+      },
+      canceled: {
+        dot: "bg-red-400",
+        badge: "bg-red-50 text-red-800 border border-red-200",
+      },
+    };
+
+    const style = styles[val] || {
+      dot: "bg-gray-400",
+      badge: "bg-gray-50 text-gray-700 border border-gray-200",
+    };
+
+    return (
+      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${style.badge}`}>
+        <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+        {val}
+      </span>
+    );
+  },
+},
+  ];
 
   return (
     <>
@@ -88,11 +178,7 @@ function Reservation() {
       <section className="flex md:flex-row flex-col-reverse gap-5 md:gap-8 lg:gap-10 justify-center items-center py-[30px] md:py-[50px] lg:py-20 px-5 lg:px-[50px] md:px-[30px] bg-(--bg-color)">
         {/* Image Section */}
         <div className="w-full">
-          <img
-            src={reservationFormImge}
-            alt="Reservation"
-            className="rounded-md"
-          />
+          <img src={reservationFormImge} alt="Reservation" className="rounded-md" />
         </div>
 
         {/* Form Section */}
@@ -113,10 +199,7 @@ function Reservation() {
                 className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               />
-              <label
-                htmlFor="full_name"
-                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
+              <label htmlFor="full_name" className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                 Full Name
               </label>
             </div>
@@ -132,10 +215,7 @@ function Reservation() {
                 className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               />
-              <label
-                htmlFor="email"
-                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
+              <label htmlFor="email" className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                 Email Address
               </label>
             </div>
@@ -152,10 +232,7 @@ function Reservation() {
                 className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               />
-              <label
-                htmlFor="phone"
-                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
+              <label htmlFor="phone" className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                 Phone Number
               </label>
             </div>
@@ -167,14 +244,15 @@ function Reservation() {
                 id="date"
                 placeholder=" "
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
+                min={new Date().toISOString().split("T")[0]}  // blocks all past dates
+                onChange={(e) => {
+                  setDate(e.target.value);
+                  setreservationTime(""); // reset time when date changes
+                }}
                 className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               />
-              <label
-                htmlFor="date"
-                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
+              <label htmlFor="date" className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                 Date
               </label>
             </div>
@@ -190,13 +268,21 @@ function Reservation() {
                 placeholder=" "
                 value={reservationTime}
                 onChange={(e) => setreservationTime(e.target.value)}
+                min={
+                  date === new Date().toISOString().split("T")[0]
+                    ? (() => {
+                        const now = new Date();
+                        // Add a 30-minute buffer so user can't book for "right now"
+                        now.setMinutes(now.getMinutes() + 30);
+                        return now.toTimeString().slice(0, 5); 
+                      })()
+                    : "11:00" // ← CHANGE THIS: restaurant opening time
+                }
+                max="22:00" // ← CHANGE THIS: restaurant closing time
                 className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
                 required
               />
-              <label
-                htmlFor="reservationTime"
-                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
+              <label htmlFor="reservationTime" className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                 Time
               </label>
             </div>
@@ -218,10 +304,7 @@ function Reservation() {
                 <option>7 People</option>
                 <option>8 People</option>
               </select>
-              <label
-                htmlFor="guests"
-                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
+              <label htmlFor="guests" className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-focus:scale-75 peer-focus:-translate-y-6">
                 Number of Guests
               </label>
             </div>
@@ -237,10 +320,7 @@ function Reservation() {
               onChange={(e) => setSpecialRequest(e.target.value)}
               className="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:border-(--button-hover-bg-color) peer"
             ></textarea>
-            <label
-              htmlFor="special_request"
-              className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
+            <label htmlFor="special_request" className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
               Special Request
             </label>
           </div>
@@ -252,24 +332,9 @@ function Reservation() {
           >
             {loading ? (
               <span className="flex items-center justify-center">
-                <svg
-                  className="animate-spin h-5 w-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8z"
-                  />
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                 </svg>
               </span>
             ) : (
@@ -277,6 +342,30 @@ function Reservation() {
             )}
           </button>
         </form>
+      </section>
+
+      {/* My Reservations Table */}
+      <section className="py-[30px] md:py-[50px] lg:py-20 px-5 lg:px-[50px] md:px-[30px] bg-(--light-color)">
+        <h2 className="text-2xl md:text-3xl font-bold text-(--heading-color) mb-2">
+          My Reservations
+        </h2>
+        <p className="text-sm text-gray-400 mb-6">
+          View and track all your table reservations
+        </p>
+
+        {reservationsLoading ? (
+          <TableSkeleton rows={4} cols={8} />
+        ) : userReservations.length === 0 ? (
+          <div className="flex justify-center items-center py-16 bg-white rounded-lg shadow-md">
+            <p className="text-gray-400 text-sm">You haven't made any reservations yet.</p>
+          </div>
+        ) : (
+          <DataTable
+            title={`${userReservations.length} Reservation${userReservations.length > 1 ? "s" : ""} Found`}
+            columns={reservationColumns}
+            rows={userReservations}
+          />
+        )}
       </section>
     </>
   );
