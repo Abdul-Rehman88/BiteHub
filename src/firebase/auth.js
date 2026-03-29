@@ -1,6 +1,8 @@
 import { setDoc, doc, serverTimestamp} from "firebase/firestore";
 import { auth, db } from "./firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
 
 // {sign up}
 export const RegisterUser = async (name, phone, email,password) => {
@@ -24,6 +26,12 @@ export const RegisterUser = async (name, phone, email,password) => {
         throw error;
     }   
 }
+// {sign up with google}
+export const signInWithGoogle = async () => {
+  const provider = new GoogleAuthProvider();
+  const result = await signInWithPopup(auth, provider);
+  return result.user;
+};
 
 // {log in}
 export const loginUser = async (email,password) => {
