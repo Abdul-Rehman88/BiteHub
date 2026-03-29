@@ -1,6 +1,6 @@
 import { Layout, ProtectedRoute } from './components/component_index'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { Home, Reservation, Menu, Cart, LogIn, SignUp } from './pages/index.js'
+import { Home, Reservation, Menu, Cart, LogIn, SignUp, ItemDetail  } from './pages/index.js'
 import { Toaster } from 'react-hot-toast';
 import useCartSync from './hook/useCartSync';
 import AdminRoutes from "./admin/routes/AdminRoutes.jsx";
@@ -21,6 +21,7 @@ function App() {
             <Route path='/reservation' element={<Reservation />} />
             <Route path='/menu' element={<Menu />} />
             <Route path='/cart' element={ <ProtectedRoute> <Cart /> </ProtectedRoute>}/>
+            <Route path='/item/:id' element={<ItemDetail />} />
             <Route path='/login' element={<LogIn />} />
             <Route path='/signup' element={<SignUp />} />
           </Route>

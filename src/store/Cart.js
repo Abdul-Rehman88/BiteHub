@@ -53,15 +53,16 @@ const cart = createSlice({
     initialState,
     reducers: {
         addItems: (state, action) => {
+             const incomingQty = action.payload.quantity ?? 1;
             if (state.items.find((i) => i.id === action.payload.id)) {
                 state.items = state.items.map((i) => {
                     if (i.id === action.payload.id) {
-                        return { ...i, quantity: i.quantity + 1 };
+                        return { ...i, quantity: i.quantity + incomingQty };
                     }
                     return i;
                 });
             } else {
-                state.items.push({ ...action.payload, quantity: 1 });
+            state.items.push({ ...action.payload, quantity: incomingQty });
             }
         },
         removeItems: (state, action) => {
@@ -111,9 +112,6 @@ const cart = createSlice({
             })
             // Handle user logout - clear local cart
             .addCase(clearUser, (state) => {
-                // Note: We don't clear the cart from Firestore here because
-                // the user might want to restore it when they log back in
-                // The cart data remains in Firestore associated with their account
                 state.items = [];
             });
     }

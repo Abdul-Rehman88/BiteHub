@@ -8,6 +8,7 @@ function Card({
   buttonText,
   price,
   onClick,
+  onButtonClick,
 
   //  dynamic styling props
   imgClass = "",
@@ -19,8 +20,10 @@ function Card({
   
 }) {
   return (
-    <div className={`w-full h-[215px] md:h-60 lg:h-[290px] relative overflow-hidden group cursor-pointer rounded-md shadow-sm ${containerClass}`}>
-
+    <div 
+      className={`w-full h-[215px] md:h-60 lg:h-[290px] relative overflow-hidden group cursor-pointer rounded-md shadow-sm ${containerClass}`}
+      onClick={onClick}
+    >
       {/* image */}
       <img
         src={image || placeholder}
@@ -53,7 +56,10 @@ function Card({
         {/* button */}
         <Button
           className={`lg:opacity-0 group-hover:opacity-100 px-3 py-2 mt-0 lg:mt-3 transition-all duration-1000 rounded-md text-[0.9rem] w-full ${buttonClass}`}
-          onClick={onClick}
+          onClick={(e) => {
+            e.stopPropagation(); //  prevents card click from firing
+            onButtonClick?.();
+          }}
         >
           {buttonText || 'Button'}
         </Button>

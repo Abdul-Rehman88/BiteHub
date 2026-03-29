@@ -6,6 +6,8 @@ import { useDispatch } from "react-redux";
 import { addItems } from "../../store/Cart.js";
 import toast from "react-hot-toast";
 import useRequireAuth from "../../hook/useRequireAuth.js"
+import { useNavigate } from "react-router-dom"; 
+
 
 export default function Tab({ limit }) {
 
@@ -14,6 +16,8 @@ export default function Tab({ limit }) {
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const checkAuth = useRequireAuth()
+    const navigate = useNavigate(); 
+
 
     const descLimit = window.innerWidth < 768 ? 20 : 30;
 
@@ -118,7 +122,8 @@ export default function Tab({ limit }) {
                               description={item.description.substring(0, descLimit) + "..."}
                               price={item.price} 
                               buttonText="Add to Cart"
-                              onClick={()=>handleAddToCart(item)}
+                              onClick={() => navigate(`/item/${item.id}`)} 
+                              onButtonClick={() => handleAddToCart(item)}  
                             />
                           ))
                         ) : (
