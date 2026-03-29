@@ -1,19 +1,22 @@
 import {useState,useEffect} from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig.js";
-import { Card } from "../component_index";
+import { Card, CardSkeleton } from "../component_index";
 import { useDispatch } from "react-redux";
 import { addItems } from "../../store/Cart.js";
 import toast from "react-hot-toast";
 import useRequireAuth from "../../hook/useRequireAuth.js"
 
-export default function Tab() {
+export default function Tab({ limit }) {
 
     const [activeTab, setActiveTab] = useState(1);
     const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const checkAuth = useRequireAuth()
+
+    const descLimit = window.innerWidth < 768 ? 20 : 30;
+
 
     const handleAddToCart =(item)=>{
         if(!checkAuth())return;
@@ -96,25 +99,30 @@ export default function Tab() {
               {/* TAB CONTENT HERE */}
               <div className="w-full text-center">
                 {loading ? (
-                  <p className="text-(--text-color)">Loading menu items...</p>
-                ) : (
+                    // skeleton grid — matches the same grid as real cards
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
+                      {Array.from({ length: limit || 8 }).map((_, i) => (
+                        <CardSkeleton key={i} />
+                     ))}
+                    </div>
+                  ) : (
                   <div>
                     {activeTab === 1 && (
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
                         {filteredItems.length > 0 ? (
-                          filteredItems.map((item) => (
-                            <Card titleClass="text-[var(--white-color)]" descriptionClass="text-[var(--light-color)]" buttonClass="hover:bg-transparent hover:text-[var(--light-color)]"
+                          filteredItems.slice(0, limit).map((item) => (
+                            <Card titleClass="text-[var(--light-color)]" descriptionClass="text-[var(--light-color)]" buttonClass="hover:bg-transparent hover:text-[var(--light-color)]"
                               key={item.id}
                               image={item.image}
                               title={item.name}
-                              description={item.description.substring(0, 100)+"..."}
+                              description={item.description.substring(0, descLimit) + "..."}
                               price={item.price} 
                               buttonText="Add to Cart"
                               onClick={()=>handleAddToCart(item)}
                             />
                           ))
                         ) : (
-                          <p className="col-span-2 md:col-span-3 text-(--text-color)">
+                          <p className="col-span-2 md:col-span-3 lg:col-span-4 text-center text-(--text-color)">
                             No main dishes available
                           </p>
                         )}
@@ -122,14 +130,14 @@ export default function Tab() {
                     )}
 
                     {activeTab === 2 && (
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
                         {filteredItems.length > 0 ? (
-                          filteredItems.map((item) => (
-                            <Card titleClass="text-[var(--white-color)]" descriptionClass="text-[var(--light-color)]" buttonClass="hover:bg-transparent hover:text-[var(--light-color)]"
+                          filteredItems.slice(0, limit).map((item) => (
+                            <Card titleClass="text-[var(--light-color)]" descriptionClass="text-[var(--light-color)]" buttonClass="hover:bg-transparent hover:text-[var(--light-color)]"
                               key={item.id}
                               image={item.image}
                               title={item.name}
-                              description={item.description.substring(0, 100)+"..."}
+                              description={item.description.substring(0, descLimit) + "..."}
                               price={item.price}
                               buttonText="Add to Cart"
                               onClick={()=>handleAddToCart(item)}
@@ -137,7 +145,7 @@ export default function Tab() {
                             />
                           ))
                         ) : (
-                          <p className="col-span-2 md:col-span-3 text-(--text-color)">
+                          <p className="col-span-2 md:col-span-3 lg:col-span-4 text-center text-(--text-color)">
                             No desserts available
                           </p>
                         )}
@@ -145,21 +153,21 @@ export default function Tab() {
                     )}
 
                     {activeTab === 3 && (
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
                         {filteredItems.length > 0 ? (
-                          filteredItems.map((item) => (
-                            <Card titleClass="text-[var(--white-color)]" descriptionClass="text-[var(--light-color)]" buttonClass="hover:bg-transparent hover:text-[var(--light-color)]"
+                          filteredItems.slice(0, limit).map((item) => (
+                            <Card titleClass="text-[var(--light-color)]" descriptionClass="text-[var(--light-color)]" buttonClass="hover:bg-transparent hover:text-[var(--light-color)]"
                               key={item.id}
                               image={item.image}
                               title={item.name}
-                              description={item.description}
+                              description={item.description.substring(0, descLimit) + "..."}
                               price={item.price}
                               buttonText="Add to Cart"
                               onClick={()=>handleAddToCart(item)}
                             />
                           ))
                         ) : (
-                          <p className="col-span-2 md:col-span-3 text-(--text-color)">
+                          <p className="col-span-2 md:col-span-3 lg:col-span-4 text-centertext-(--text-color)">
                             No drinks available
                           </p>
                         )}

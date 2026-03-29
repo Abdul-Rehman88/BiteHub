@@ -19,7 +19,7 @@ function Card({
   
 }) {
   return (
-    <div className={`w-full h-[230px] md:h-[250px] lg:h-[350px] relative overflow-hidden group cursor-pointer rounded-md shadow-sm ${containerClass}`}>
+    <div className={`w-full h-[215px] md:h-60 lg:h-[290px] relative overflow-hidden group cursor-pointer rounded-md shadow-sm ${containerClass}`}>
 
       {/* image */}
       <img
@@ -33,26 +33,26 @@ function Card({
           Rs. {price || '$0.00'}
         </span>
 
-      {/* text */}
-      <div className="absolute top-[50%] transform group-hover:translate-y-[-50%] transition-all duration-500 w-full h-full left-0 z-20 flex items-center justify-center flex-col p-5 md:p-10">
-        
+      {/* text area*/}
+      <div className="absolute bg-gray-900/20 backdrop-blur-xs lg:backdrop-blur-sm border border-white/10 shadow-lg top-[50%] md:top-[42%] lg:top-[75%] transform lg:group-hover:translate-y-[-25%] transition-all duration-500 w-full h-full left-0 z-20 flex flex-col px-2 py-2 md:py-2 lg:py-3 " >        
+      
         {/* title */}
         <h3
-          className={`text-[24px] md:text-[32px] lg:text-4xl font-bold text-(--heading-color) text-center capitalize ${titleClass}`}
+          className={`text-[16.5px] md:text-[20px] lg:text-[24px] font-bold text-[#222222] text-center capitalize ${titleClass}`}
         >
           {title || 'Card Title'}
         </h3>
 
         {/* description */}
         <p
-          className={`text-center opacity-0 group-hover:opacity-100 transition-all duration-700 text-(--text-color) text-[16px] ${descriptionClass}`}
+          className={`text-center lg:opacity-0 group-hover:opacity-100 transition-all duration-700 text-(--text-color) text-sm md:text-[15px] lg:text-[16px] line-clamp-1 md:line-clamp-2 h-6 md:h-[46px] lg:h-[30px] ${descriptionClass}`}
         >
           {description || 'lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
         </p>
 
         {/* button */}
         <Button
-          className={`opacity-0 group-hover:opacity-100 px-3 py-2 mt-3 transition-all duration-1000 rounded-md text-[0.9rem] ${buttonClass}`}
+          className={`lg:opacity-0 group-hover:opacity-100 px-3 py-2 mt-0 lg:mt-3 transition-all duration-1000 rounded-md text-[0.9rem] w-full ${buttonClass}`}
           onClick={onClick}
         >
           {buttonText || 'Button'}
