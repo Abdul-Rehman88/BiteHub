@@ -198,7 +198,7 @@ export default function ItemDetail() {
 
           {/* Add to Cart Button */}
           <Button
-            className="w-full md:w-fit px-8 py-3 rounded-full text-base font-semibold"
+            className="w-full md:w-fit px-8 py-3 text-base font-semibold"
             onClick={handleAddToCart}
           >
             Add to Cart
