@@ -59,15 +59,52 @@ useEffect(() => {
     setLoading(false);
   };
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (files && files[0]) {
-      setForm((prev) => ({ ...prev, [name]: files[0] }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
-  };
+  const compressImage = (file) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (e) => {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxWidth = 1920;
+        let width = img.width;
+        let height = img.height;
 
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            resolve(new File([blob], file.name.replace(/\.[^.]+$/, ".webp"), {
+              type: "image/webp",
+            }));
+          },
+          "image/webp",
+          0.9
+        );
+      };
+    };
+  });
+};
+
+ const handleChange = async (e) => {
+  const { name, value, files } = e.target;
+  if (files && files[0]) {
+    const compressed = await compressImage(files[0]);
+    setForm((prev) => ({ ...prev, [name]: compressed }));
+  } else {
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }
+};
+  
   const uploadImage = async (file) => {
     if (!file) return null; // null = no new file chosen
 

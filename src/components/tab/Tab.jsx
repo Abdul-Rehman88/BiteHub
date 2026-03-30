@@ -56,7 +56,7 @@ export default function Tab({ limit }) {
         // Filter menu items based on active tab
         const filteredItems = menuItems.filter((item) => {
           if (activeTab === 1) return item.category === "main"|| item.category === "Main";
-          if (activeTab === 2) return item.category === "dessert "|| item.category === "Dessert";
+          if (activeTab === 2) return item.category === "dessert"|| item.category === "Dessert";
           if (activeTab === 3) return item.category === "drink" || item.category === "Drink";
           return false;
         });

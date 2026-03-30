@@ -5,5 +5,7 @@ import Cart from './cart/Cart.jsx';
 import LogIn from './log_in/LogIn.jsx';
 import SignUp from './sign_up/SignUp.jsx';
 import ItemDetail from './itemdetail/ItemDetail.jsx';
+import ForgotPassword from './reset_password/ForgotPassword.jsx';
+import ResetPassword from './reset_password/ResetPassword.jsx';
 
-export {Home,Reservation ,Menu,Cart,LogIn,SignUp , ItemDetail};
+export { Home,Reservation ,Menu,Cart,LogIn,SignUp , ItemDetail, ForgotPassword, ResetPassword};

@@ -1,6 +1,6 @@
 import { Layout, ProtectedRoute } from './components/component_index'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { Home, Reservation, Menu, Cart, LogIn, SignUp, ItemDetail  } from './pages/index.js'
+import { Home, Reservation, Menu, Cart, LogIn, SignUp, ItemDetail, ForgotPassword, ResetPassword } from './pages/index.js'
 import { Toaster } from 'react-hot-toast';
 import useCartSync from './hook/useCartSync';
 import AdminRoutes from "./admin/routes/AdminRoutes.jsx";
@@ -24,6 +24,8 @@ function App() {
             <Route path='/item/:id' element={<ItemDetail />} />
             <Route path='/login' element={<LogIn />} />
             <Route path='/signup' element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Route>
 
           {/* Admin routes (NO header/footer) */}
