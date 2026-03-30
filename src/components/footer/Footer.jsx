@@ -44,7 +44,7 @@ const Footer = () => {
                 </div>
 
                 {/* Links Sections */}
-                <div className="flex gap-20 lg:w-1/2">
+                <div className="flex gap-18 md:gap-8 lg:gap-20 lg:w-1/2">
 
                     {/* Quick Links */}
                     <div className="lg:w-1/2">
@@ -63,8 +63,7 @@ const Footer = () => {
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
+                                        className="w-3 h-3 hidden lg:inline-block lg:opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"                                        fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
                                     >
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                                     </svg>
@@ -76,12 +75,12 @@ const Footer = () => {
 
                    {/* Contact Info */}
                     <div className="lg:w-1/3">
-                        <h3 className="text-xl font-semibold text-[#1A1A1A] mb-4">Contact Us</h3>
+                        <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">Contact Us</h3>
                         <div className="flex flex-col gap-3">
 
                          {/* Address - Google Maps Link */}
 
-                            <a    href="https://maps.google.com/?q=Clifton+Block+5+Karachi"
+                            <a href="https://maps.google.com/?q=Clifton+Block+5+Karachi"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-sm text-gray-600 flex items-start gap-2 group hover:text-[#E09A05] transition-colors duration-300"
@@ -93,7 +92,7 @@ const Footer = () => {
                                 >
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 2C8.686 2 6 4.686 6 8c0 5.25 6 13 6 13s6-7.75 6-13c0-3.314-2.686-6-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z" />
                                 </svg>
-                                <span>123 Food Street, Block 5, Clifton, Karachi</span>
+                                <span >123 Food Street, Block 5,<br/> Clifton, Karachi</span>
                             </a>
 
                             {/* Phone - Clickable */}

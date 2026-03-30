@@ -168,11 +168,11 @@ const goToSlide = (index) => {
         className="flex bg-cover bg-center h-[60vh] md:h-[70vh] lg:h-[80vh] w-full relative gradient-overlay"
         style={{ backgroundImage: `url(${heroSectionHome})` }}
       >
-        <div className="flex flex-col justify-center items-center w-full h-full z-10 gap-4">
+        <div className="flex flex-col justify-center items-center w-full h-full z-10 gap-4 px-2">
           <h1 className="lg:text-6xl md:text-5xl text-4xl font-bold text-center text-(--light-color)">
             Welcome to BiteHub
           </h1>
-          <p className="lg:text-xl md:text-xl text-lg text-center w-[350px] md:w-[400px] text-(--light-color)">
+          <p className="px-2 lg:text-xl md:text-xl text-lg text-center xs:w-[320px] sm:w-[350px] md:w-[400px] text-(--light-color)">
             Taste the excellence. Feel the ambiance. Enjoy the moment.
           </p>
           <Button
@@ -197,7 +197,7 @@ const goToSlide = (index) => {
       {/* why choose us */}
       <div className="flex flex-col gap-20 justify-center items-center py-[30px] md:py-[50px] lg:py-20 px-5 lg:px-[50px] md:px-[30px] bg-(--light-color)">
         <h2 className="text-(--heading-color) text-2xl md:text-3xl lg:text-4xl font-bold">Why Choose Us</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5 lg:gap-10 text-[13px] md:text-sm justify-center items-center text-center p-0 lg:px-12 ">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 md:gag-5 lg:gap-10 text-[13px] md:text-sm justify-center items-center text-center p-0 lg:px-12 ">
           {/* first box */}
           <div className="p-4 md:p-6 lg:p-10 bg-amber-200 rounded-xl h-full hover:-translate-y-2 transition-transform duration-400" >
             <img src={freshIngredients} alt="Fresh Ingredients"
