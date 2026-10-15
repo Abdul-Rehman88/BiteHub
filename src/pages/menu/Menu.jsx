@@ -1,4 +1,3 @@
-import heroSectionMenu from '../../assets/images/menu-hero.webp'
 import {Tab } from "../../components/component_index.js";
 
 function Menu() {
@@ -7,7 +6,7 @@ function Menu() {
       {/* hero section */}
       <div
         className="flex bg-cover bg-center h-[45vh] md:h-[55vh] lg:h-[60vh] w-full relative gradient-overlay"
-        style={{ backgroundImage: `url(${heroSectionMenu})` }}
+        style={{ backgroundImage: `url(/heroSections/menu_hero.webp)` }}
       >
         <div className="flex flex-col justify-center items-center w-full h-full z-10 gap-4">
           <h1 className="lg:text-6xl md:text-5xl text-4xl font-bold text-center text-(--light-color)">
