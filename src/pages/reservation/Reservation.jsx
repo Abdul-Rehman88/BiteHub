@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import heroSectionReservation from "../../assets/images/Reservation-hero.webp";
 import reservationFormImge from "../../assets/images/reservation-form-image.webp";
 import { createReservation } from "../../firebase/reservation";
 import toast from "react-hot-toast";
@@ -162,7 +161,7 @@ useEffect(() => {
       {/* hero section */}
       <div
         className="flex bg-cover bg-center h-[45vh] md:h-[55vh] lg:h-[60vh] w-full relative gradient-overlay"
-        style={{ backgroundImage: `url(${heroSectionReservation})` }}
+        style={{ backgroundImage: `url(/heroSections/reservation_hero.webp)` }}
       >
         <div className="flex flex-col justify-center items-center w-full h-full z-10 gap-4">
           <h1 className="lg:text-6xl md:text-5xl text-4xl font-bold text-center text-white">
