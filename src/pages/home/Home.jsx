@@ -1,5 +1,5 @@
 import { useState, useEffect  } from "react";
-import { heroSectionHome, freshIngredients, fastDelivery,diverseMenu,
+import { freshIngredients, fastDelivery,diverseMenu,
         customerSatisfaction, masterChief, affordablePrices 
        } from "../../assets";
 import { Button,Tab } from "../../components/component_index.js";
@@ -166,7 +166,7 @@ const goToSlide = (index) => {
       {/* hero section */}
       <div
         className="flex bg-cover bg-center h-[60vh] md:h-[70vh] lg:h-[80vh] w-full relative gradient-overlay"
-        style={{ backgroundImage: `url(${heroSectionHome})` }}
+        style={{ backgroundImage: `url(/heroSections/home_hero.webp)` }}
       >
         <div className="flex flex-col justify-center items-center w-full h-full z-10 gap-4 px-2">
           <h1 className="lg:text-6xl md:text-5xl text-4xl font-bold text-center text-(--light-color)">
@@ -279,6 +279,7 @@ const goToSlide = (index) => {
                         <img
                           src={card.image}
                           alt={card.name}
+                          loading="lazy"
                           className="w-16 h-16 rounded-full object-cover"
                         />
                         <div>
