@@ -36,42 +36,42 @@ function Home() {
       name: "Sarah",
       review: "Amazing food quality and quick delivery! The biryani was absolutely delicious and arrived hot. Will definitely order again!",
       rating: 4,
-      image: "public/reviews/sarah.webp"
+      image: "/reviews/sarah.webp"
     },
     {
       id: 2,
       name: "Ali Khan",
       review: "Best restaurant in town! The customer service is exceptional and the menu variety is impressive. Highly recommended!",
       rating: 5,
-      image: "public/reviews/Ali_Khan.webp"
+      image: "/reviews/Ali_Khan.webp"
     },
     {
       id: 3,
       name: "Fatima Malik",
       review: "Love the ambiance and the food taste. The desserts are to die for! Perfect place for family gatherings.",
       rating: 5,
-      image: "public/reviews/Fatima_Malik.webp"
+      image: "/reviews/Fatima_Malik.webp"
     },
     {
       id: 4,
       name: "Raza",
       review: "Great experience overall. The staff is friendly and the delivery was faster than expected. Keep up the good work!",
       rating: 4,
-      image: "public/reviews/Raza.webp"
+      image: "/reviews/Raza.webp"
     },
     {
       id: 5,
       name: "Ayesha",
       review: "Affordable prices with premium quality. The master chef really knows how to create magic with flavors!",
       rating: 5,
-      image: "public/reviews/Ayesha.webp"
+      image: "/reviews/Ayesha.webp"
     },
     {
       id: 6,
       name: "Imran Sheikh",
       review: "Excellent food and service! The diverse menu has something for everyone. My go-to restaurant now!",
       rating: 5,
-      image: "public/reviews/Imran_Sheikh.webp"
+      image: "/reviews/Imran_Sheikh.webp"
     }
   ];
 
@@ -201,15 +201,17 @@ const goToSlide = (index) => {
           {/* first box */}
           <div className="p-4 md:p-6 lg:p-10 bg-amber-200 rounded-xl h-full hover:-translate-y-2 transition-transform duration-400" >
             <img src={freshIngredients} alt="Fresh Ingredients"
-              className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 mx-auto" />
+                loading="lazy"
+                className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 mx-auto" />
             <h3 className="text-(--heading-color) text-lg md:text-xl font-semibold mb-2">Fresh Ingredients</h3>
             <p className="text-(--text-color) max-w-xs">We source only the freshest ingredients to ensure every dish is bursting with flavor.</p>
           </div>
 
           {/* second box */}
           <div className="p-4 md:p-6 lg:p-10 bg-(--dark-color) rounded-xl h-full hover:-translate-y-2 transition-transform duration-400" >
-            <img src={fastDelivery} alt="Fast Delivery"
-              className=" w-16 h-16 lg:w-24 lg:h-24 mx-auto" />
+            <img src={fastDelivery} alt="Fast Delivery" 
+                loading="lazy"
+                className=" w-16 h-16 lg:w-24 lg:h-24 mx-auto" />
             <h3 className="text-(--white-color) text-lg md:text-xl font-semibold mb-2">Fast Delivery</h3>
             <p className="text-(--light-color) max-w-xs">We ensure quick and reliable delivery so you can enjoy your meals without delay.</p>
           </div>
@@ -217,7 +219,8 @@ const goToSlide = (index) => {
           {/* third box */}
           <div className="p-4 md:p-6 lg:p-10 bg-(--dark-color) md:bg-amber-200 rounded-xl h-full hover:-translate-y-2 transition-transform duration-400" >
             <img src={masterChief} alt="Master Chief"
-              className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 mx-auto" />
+                loading="lazy"
+                className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 mx-auto" />
             <h3 className="text-(--white-color) md:text-(--heading-color) text-lg md:text-xl font-semibold mb-2"> Master Chief</h3>
             <p className="text-(--light-color) md:text-(--text-color) max-w-xs">Our master chefs bring years of experience and passion to every dish.</p>
           </div>  
@@ -225,7 +228,8 @@ const goToSlide = (index) => {
           {/* fourth box */}
             <div className="p-4 md:p-6 lg:p-10 md:bg-(--dark-color) bg-amber-200 rounded-xl h-full hover:-translate-y-2 transition-transform duration-400" >
             <img src={diverseMenu} alt="Diverse Menu"
-              className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 mx-auto" />
+                loading="lazy"
+                className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 mx-auto" />
             <h3 className="md:text-(--white-color) text-(--heading-color) text-lg md:text-xl font-semibold mb-2">Diverse Menu</h3>
             <p className="md:text-(--light-color) text-(--text-color) max-w-xs">Our menu offers a wide variety of dishes to satisfy every palate.</p>
           </div> 
@@ -233,7 +237,8 @@ const goToSlide = (index) => {
           {/* fifth box */}
             <div className="p-4 md:p-6 lg:p-10 bg-amber-200 rounded-xl  h-full hover:-translate-y-2 transition-transform duration-400" >
             <img src={affordablePrices} alt="Affordable Prices"
-              className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 mx-auto" />
+                loading="lazy"
+                className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 mx-auto" />
             <h3 className="text-(--heading-color) text-lg md:text-xl font-semibold mb-2">Affordable Prices</h3>
             <p className="text-(--text-color) max-w-xs">We offer competitive pricing without compromising on quality.</p>
           </div>
@@ -241,7 +246,8 @@ const goToSlide = (index) => {
           {/* sixth box */}
           <div className="p-4 md:p-6 lg:p-10 bg-(--dark-color) rounded-xl  h-full hover:-translate-y-2 transition-transform duration-400" >
             <img src={customerSatisfaction} alt="Customer Satisfaction"
-              className=" w-16 h-16 lg:w-24 lg:h-24 mx-auto" />
+                loading="lazy"
+                className=" w-16 h-16 lg:w-24 lg:h-24 mx-auto" />
             <h3 className="text-(--white-color) text-lg md:text-xl font-semibold mb-2">Customer Satisfaction</h3>
             <p className="text-(--light-color) max-w-xs">Our customers are our top priority, and we strive to exceed their expectations.</p>
           </div>
