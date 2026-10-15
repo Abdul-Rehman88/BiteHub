@@ -1,28 +1,28 @@
 {
   "hosting": {
-    "public": "dist", // Folder containing the built website
-
+    "public": "dist", 
+    
     "ignore": [
-      "firebase.json", // Don't deploy this config file
-      "**/.*", // Ignore hidden files
-      "**/node_modules/**" // Ignore dependencies
+      "firebase.json", 
+      "**/.*",
+      "**/node_modules/**"
     ],
 
     "rewrites": [
       {
-        "source": "**", // Handle all routes
-        "destination": "/index.html" // Let React Router handle navigation
+        "source": "**", 
+        "destination": "/index.html" 
       }
     ],
 
     "headers": [
       {
-        "source": "**/*.@(js|css|woff2)", // Apply caching to JS, CSS and fonts
+        "source": "**/*.@(js|css|woff2)", 
         "headers": [
           {
             "key": "Cache-Control",
             "value": "public, max-age=31536000, immutable"
-            // Cache versioned files for one year
+            
           }
         ]
       }
