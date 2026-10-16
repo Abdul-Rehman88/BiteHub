@@ -7,17 +7,17 @@ import useCartSync from './hook/useCartSync';
 import AdminRoutes from './admin/routes/AdminRoutes.jsx';
 
 // Load Home and Menu normally
-import Home from './pages/Home.jsx';
-import Menu from './pages/Menu.jsx';
+import Home from './pages/home/Home.jsx';
+import Menu from './pages/menu/Menu.jsx';
 
 // Load other pages only when visited
-const Reservation = lazy(() => import('./pages/Reservation.jsx'));
-const Cart = lazy(() => import('./pages/Cart.jsx'));
-const LogIn = lazy(() => import('./pages/LogIn.jsx'));
-const SignUp = lazy(() => import('./pages/SignUp.jsx'));
-const ItemDetail = lazy(() => import('./pages/ItemDetail.jsx'));
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword.jsx'));
-const ResetPassword = lazy(() => import('./pages/ResetPassword.jsx'));
+const Reservation = lazy(() => import('./pages/reservation/Reservation.jsx'));
+const Cart = lazy(() => import('./pages/cart/Cart.jsx'));
+const LogIn = lazy(() => import('./pages/login/LogIn.jsx'));
+const SignUp = lazy(() => import('./pages/signup/SignUp.jsx'));
+const ItemDetail = lazy(() => import('./pages/itemdetail/ItemDetail.jsx'));
+const ForgotPassword = lazy(() => import('./pages/reset_password/ForgotPassword.jsx'));
+const ResetPassword = lazy(() => import('./pages/reset_password/ResetPassword.jsx'));
 
 function App() {
   useCartSync();
